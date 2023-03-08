@@ -1,4 +1,4 @@
-from .utils import Printable
+from utils import Printable
 
 class Establishment(Printable):
     """
