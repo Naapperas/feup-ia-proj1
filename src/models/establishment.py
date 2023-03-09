@@ -1,4 +1,4 @@
-from utils import Printable
+from debug import Printable
 
 class Establishment(Printable):
     """
@@ -7,6 +7,7 @@ class Establishment(Printable):
     def __init__(self, id: int, district: str, county: str, parish: str, address: str, latitude: float, longitude: float, inspection_utility: int, inspection_time: int, opening_hours_str: str):
         self.id = int(id)
         self.district = district
+        self.county = county
         self.parish = parish
         self.address = address
         self.coords = (float(latitude), float(longitude))
