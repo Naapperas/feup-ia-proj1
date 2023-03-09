@@ -3,8 +3,9 @@ from typing import List
 from .graph import *
 from files import parse_file
 
+
 def parse_graph(file: str) -> Graph:
-    
+
     mat = []
 
     for line in parse_file(file):
