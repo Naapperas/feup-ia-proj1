@@ -1,7 +1,9 @@
-from typing import List
+"""
+Logic related to parsing the problem's graph out of a text file
+"""
 
-from .graph import *
 from files import parse_file
+from .graph import *
 
 
 def parse_graph(file: str) -> Graph:

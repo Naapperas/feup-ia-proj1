@@ -1,3 +1,7 @@
+"""
+Logic related to an Establishment in the context of our problem
+"""
+
 from debug import Printable
 
 
@@ -8,7 +12,7 @@ class Establishment(Printable):
 
     def __init__(
         self,
-        id: int,
+        establishment_id: int,
         district: str,
         county: str,
         parish: str,
@@ -19,7 +23,7 @@ class Establishment(Printable):
         inspection_time: int,
         opening_hours_str: str,
     ):
-        self.id = int(id)
+        self.establishment_id = int(establishment_id)
         self.district = district
         self.county = county
         self.parish = parish
@@ -27,4 +31,15 @@ class Establishment(Printable):
         self.coords = (float(latitude), float(longitude))
         self.inspection_utility = float(inspection_utility)
         self.inspection_time = int(inspection_time)  # minutes
-        self.opening_hours: list[int] = eval(opening_hours_str)
+        self.opening_hours: list[int] = list(
+            map(int, opening_hours_str.removeprefix("[").removesuffix("]").split(", "))
+        )
+
+    def is_open(self, hour: int) -> bool:
+        """
+        Checks if an establishment is open at the given hour
+        """
+
+        assert 1 <= hour <= 24, "Invalid hour value"
+
+        return self.opening_hours[hour - 1] == 1
