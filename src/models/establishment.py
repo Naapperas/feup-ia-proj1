@@ -73,8 +73,8 @@ class Establishment(Printable, Parsable):
         coords: Coords,
         inspection_data: InspectionData,
         opening_hours_str: str,
-    ):
-        self.establishment_id = int(establishment_id)
+    ):  # pylint: disable=too-many-arguments
+        self.establishment_id = establishment_id
         self.address = address
         self.coords = coords
         self.inspection_data = inspection_data
@@ -101,10 +101,12 @@ class Establishment(Printable, Parsable):
 
     @staticmethod
     def parse(data):
-        id = get_named_field(data, "Id", int)
+        establishment_id = get_named_field(data, "Id", int)
         address = EstablishmentAddress.parse(data)
         coords = Coords.parse(data)
         inspection_data = InspectionData.parse(data)
         opening_hours = get_named_field(data, "Opening Hours", str)
 
-        return Establishment(id, address, coords, inspection_data, opening_hours)
+        return Establishment(
+            establishment_id, address, coords, inspection_data, opening_hours
+        )
