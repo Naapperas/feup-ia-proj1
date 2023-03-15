@@ -13,7 +13,7 @@ class Graph(Printable):
     """
 
     def __init__(self, mat: list[list[float]]):
-        self.mat = np.matrix(mat) # type: ignore
+        self.mat = np.matrix(mat)  # type: ignore
 
     def get_row(self, establishment_id: int) -> list[float]:
         """
@@ -27,4 +27,4 @@ class Graph(Printable):
         Returns a column of the graph's matrix
         """
 
-        return self.mat[:, establishment_id] # type: ignore
+        return self.mat[:, establishment_id]  # type: ignore

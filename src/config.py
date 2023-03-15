@@ -18,5 +18,17 @@ class Config:
             **dotenv_values(".env.secret", verbose=True),  # load sensitive variables
         }
 
-        self.__slots__ = configs.keys()
+        self.__slots__ = list(configs.keys())
         self.__dict__.update(configs)
+
+    def get(self, key: str) -> str:
+        """
+        Gets the value associated with the given config key
+        """
+        return self.__dict__[key]
+
+    def set(self, key: str, value: str):
+        """
+        Sets the given value associated to the given config key
+        """
+        self.__dict__[key] = value
