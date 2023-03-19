@@ -3,7 +3,10 @@ Logic related to an Establishment in the context of our problem
 """
 
 from dataclasses import dataclass
+
+
 from debug import Printable
+from models.coords import Coords
 from models.parse import Parsable, get_named_field
 
 
@@ -25,23 +28,6 @@ class EstablishmentAddress(Printable, Parsable):
         parish = get_named_field(data, "Parish", str)
         full_address = get_named_field(data, "Address", str)
         return EstablishmentAddress(district, county, parish, full_address)
-
-
-@dataclass
-class Coords(Printable, Parsable):
-    """
-    A pair of coordinates
-    """
-
-    latitude: float
-    longitude: float
-
-    @staticmethod
-    def parse(data):
-        lat = get_named_field(data, "Latitude", float)
-        long = get_named_field(data, "Longitude", float)
-
-        return Coords(lat, long)
 
 
 @dataclass

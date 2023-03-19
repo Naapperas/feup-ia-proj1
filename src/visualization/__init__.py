@@ -1,4 +1,10 @@
+"""
+Functions and classes related to the application
+"""
+
 import pygame
+
+from models.coords import Coords
 
 MIN_LAT = 41.01793
 MAX_LAT = 41.46618
@@ -16,6 +22,10 @@ MAX_MAP_Y = MIN_MAP_Y + MAP_Y_RANGE
 
 
 class Visualization:
+    """
+    Class representing the simulation's visualization
+    """
+
     __slots__ = ["map", "scaled_map", "translation", "zoom"]
 
     def __init__(self):
@@ -26,29 +36,36 @@ class Visualization:
         self.scaled_map = pygame.transform.scale_by(self.map, self.zoom)
 
     def draw(self, screen: pygame.Surface):
+        """
+        Draws this map on the given surfaces
+        """
         screen.blit(self.scaled_map, self.map_to_screen())
 
-    def map_to_world(self, coords: tuple[float, float] = (0, 0)) -> tuple[float, float]:
+    def map_to_world(self, coords: tuple[float, float] = (0, 0)) -> Coords:
         """
-        Converts the map pixel coordinates to the corresponding real world coordinates, returned as (latitude, longitude)
+        Converts the map pixel coordinates to the corresponding real world coordinates,
+        returned as (latitude, longitude)
         """
-        return (
+        return Coords(
             (coords[1] - MIN_MAP_Y) / MAP_Y_RANGE * LAT_RANGE + MIN_LAT,
             (coords[0] - MIN_MAP_X) / MAP_X_RANGE * LNG_RANGE + MIN_LNG,
         )
 
-    def world_to_map(self, coords: tuple[float, float] = (0, 0)) -> tuple[float, float]:
+    def world_to_map(self, coords: Coords = Coords(0, 0)) -> tuple[float, float]:
         """
         Converts the real world coordinates to the corresponding map pixel coordinates
         """
         return (
-            (coords[1] - MAX_LNG) / LNG_RANGE * MAP_X_RANGE + MIN_MAP_X,
-            (coords[0] - MIN_LAT) / LAT_RANGE * MAP_Y_RANGE + MIN_MAP_Y,
+            (coords.latitude - MIN_LAT) / LAT_RANGE * MAP_Y_RANGE + MIN_MAP_Y,
+            (coords.longitude - MAX_LNG) / LNG_RANGE * MAP_X_RANGE + MIN_MAP_X,
         )
 
     def screen_to_map(
         self, coords: tuple[float, float] = (0, 0)
     ) -> tuple[float, float]:
+        """
+        Converts the screen coordinates to the corresponding map pixel coordinates
+        """
         return (
             coords[0] / self.zoom + self.translation[0],
             coords[1] / self.zoom + self.translation[1],
@@ -57,12 +74,18 @@ class Visualization:
     def map_to_screen(
         self, coords: tuple[float, float] = (0, 0)
     ) -> tuple[float, float]:
+        """
+        Converts the map pixel coordinates to the corresponding screen coordinates
+        """
         return (
             (coords[0] - self.translation[0]) * self.zoom,
             (coords[1] - self.translation[1]) * self.zoom,
         )
 
     def on_mousemove_l(self, event: pygame.event.Event):
+        """
+        Handler for mouse movements when the left mouse button is pressed
+        """
         rel = self.screen_to_map((-event.rel[0], -event.rel[1]))
 
         self.translation = (

@@ -3,10 +3,11 @@ Logic related to parsing models out of text
 """
 
 from typing import Callable, Type, TypeVar, Any
+
 from files import parse_file
 
 
-class Parsable:  # pylint:`` disable=too-few-public-methods
+class Parsable:  # pylint: disable=too-few-public-methods
     """
     Defines that a class can be parsed from a dict containing its relevant data
     """
@@ -36,7 +37,7 @@ def get_named_field(
     return field_type(field)
 
 
-def parse_model(file: str, model: Model) -> list[Model]:
+def parse_model(file: str, model: Type[Model]) -> list[Model]:
     """
     Parses a CSV file and returns an array of the specified model
     """
