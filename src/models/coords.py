@@ -1,3 +1,7 @@
+"""
+Classes and methods related to coordinates
+"""
+
 import sys
 from typing import ClassVar
 from dataclasses import dataclass
@@ -31,7 +35,7 @@ class Coords(Printable, Parsable):
 
         return Coords(lat, long)
 
-    def as_tuples(self) -> tuple[float, float]:
+    def as_tuple(self) -> tuple[float, float]:
         """
         Returns this coordinate pair as a tuple of latitude and longitude
         """

@@ -4,21 +4,25 @@ State representation in this simulation
 
 
 from copy import deepcopy
-from typing import List
-from graph.graph import Graph
-from models.establishment import Establishment
+from debug import Printable
+from graph import Graph
+from models import Brigade, Establishment
 
 
-class State:
+class State(Printable):
     """
     The state of the problem, encoding every useful parameter
     """
 
-    def __init__(self):
-        self.routes: List[List[Establishment]] = []
-        self.network: Graph | None = None
-
-        pass
+    def __init__(
+        self,
+        establishments: list[Establishment],
+        brigades: list[Brigade],
+        network: Graph,
+    ):
+        self.establishments = establishments
+        self.brigades = brigades
+        self.network = network
 
     def value(self) -> float:
         """
@@ -29,6 +33,7 @@ class State:
 
     def copy(self):
         """
-        Returns a copy of this state that can be modified without persisting changes to this instance
+        Returns a copy of this state that can be modified without
+        persisting changes to this instance
         """
         return deepcopy(self)
