@@ -3,6 +3,7 @@ Classes and methods related to running the simulation of the problem
 """
 
 
+import math
 from graph.graph import Graph
 from models.establishment import Establishment
 from state.state import State
@@ -24,6 +25,14 @@ class Simulation:
         self.state = state
         self.network = network
         self.establishments = establishments
+
+    @staticmethod
+    def get_num_carriers(establishments: list[Establishment]) -> int:
+        """
+        Returns the expected amount of carriers needed to run this simulation
+        """
+
+        return math.floor(0.1 * len(establishments))
 
     def get_state(self) -> State:
         """

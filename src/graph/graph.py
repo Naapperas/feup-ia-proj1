@@ -28,3 +28,10 @@ class Graph(Printable):
         """
 
         return self.mat[:, establishment_id]  # type: ignore
+
+    def get(self, first_establishment_id: int, second_establishment_id: int) -> float:
+        """
+        Returns the element at the given column and row
+        """
+
+        return self.mat[first_establishment_id, second_establishment_id]

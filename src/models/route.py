@@ -2,7 +2,7 @@
 Classes and methods related to routes
 """
 
-from typing import Iterable, Iterator
+from typing import Iterable, Iterator, SupportsIndex, overload
 from debug import Printable
 from models.establishment import Establishment
 
@@ -16,4 +16,18 @@ class Route(Printable, Iterable[Establishment]):
         self.route_establishments = route_establishments
 
     def __iter__(self) -> Iterator[Establishment]:
-        return self.route_establishments.__iter__()
+        return iter(self.route_establishments)
+
+    def __len__(self) -> int:
+        return len(self.route_establishments)
+
+    @overload
+    def __getitem__(self, __i: SupportsIndex) -> Establishment:
+        ...
+
+    @overload
+    def __getitem__(self, __s: slice) -> list[Establishment]:
+        ...
+
+    def __getitem__(self, __arg):
+        return self.route_establishments[__arg]

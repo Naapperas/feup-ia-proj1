@@ -9,7 +9,7 @@ from models.establishment import Establishment
 from .generator import Generator
 
 
-class RandomGenerator(Generator):
+class RandomGenerator(Generator):  # pylint: disable=too-few-public-methods
     """
     Generator that takes a random sample from the population provided
     """

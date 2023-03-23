@@ -13,10 +13,12 @@ class Parsable:  # pylint: disable=too-few-public-methods
     """
 
     @staticmethod
-    def parse(data: dict[str, Any]):
+    def parse(data: dict[str, Any]) -> "Parsable":  # pylint: disable=unused-argument
         """
         Returns a model parsed from the given data dict
         """
+
+        return Parsable()
 
 
 Model = TypeVar("Model", bound=Parsable)

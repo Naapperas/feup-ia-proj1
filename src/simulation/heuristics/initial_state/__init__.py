@@ -3,6 +3,7 @@ Generator function for the initial state
 """
 
 from copy import deepcopy
+from typing import Type, TypeVar
 from models.brigade import Brigade
 from models.establishment import Establishment
 from models.route import Route
@@ -15,7 +16,7 @@ from .random import *
 def initial_state(
     establishments: list[Establishment],
     num_carriers: int,
-    generator: Generator = RandomGenerator(),
+    generator: Type[Generator] = RandomGenerator,
 ) -> State:
     """
     Generates the initial state from the given list of establishments
@@ -26,14 +27,16 @@ def initial_state(
 
     brigades: list[Brigade] = []
 
-    establishments_copy = deepcopy(establishments[1:])
+    establishments_copy = deepcopy(establishments)
 
     for _ in range(num_carriers):
         route_establishments, establishments_copy = generator.generate(
             establishments_copy, num_carriers
         )
 
-        route: Route = Route(route_establishments)
+        route: Route = Route(
+            route_establishments
+        )  # do this in order to correctly model other calculations
         brigade: Brigade = Brigade(route)
 
         brigades.append(brigade)

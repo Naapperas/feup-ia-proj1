@@ -2,38 +2,27 @@
 The main module
 """
 
-from copy import deepcopy
-import math
-from random import sample
-from models import parse_model, Establishment, Brigade, Route
+from models import parse_model, Establishment
 from graph import parse_graph
 from app import App
+from simulation.heuristics.initial_state import initial_state
+from simulation.simulation import Simulation
+from state.state import State
 
 if __name__ == "__main__":
     establishments = parse_model("./resources/establishments.csv", Establishment)
     network = parse_graph("./resources/distances.csv")
 
-    num_carriers: int = math.floor(0.1 * len(establishments))
+    depot, establishments = establishments[0], establishments[1:]
 
-    brigades: list[Brigade] = []
+    num_carriers: int = Simulation.get_num_carriers(establishments)
 
-    establishments_copy = deepcopy(establishments[1:])
-
-    for i in range(num_carriers):
-        route_establishments = sample(
-            establishments_copy, len(establishments_copy) // num_carriers
-        )
-
-        # generate random initial state
-        for establishment in route_establishments:
-            establishments_copy.remove(establishment)
-
-        route: Route = Route(route_establishments)
-        brigade: Brigade = Brigade(route)
-
-        brigades.append(brigade)
+    state: State = initial_state(establishments, num_carriers)
 
     print("Matrix", network)
     print("Establishments", establishments)
+    print("State", state)
+
+    simulation = Simulation(depot, state, network, establishments)
 
     App().loop()

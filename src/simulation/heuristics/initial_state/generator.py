@@ -5,7 +5,7 @@ Initial State Generator
 from models.establishment import Establishment
 
 
-class Generator:
+class Generator:  # pylint: disable=too-few-public-methods
     """
     Generator class that has a method **generate**
     that takes a list of establishments and the desired number of carriers
@@ -15,7 +15,8 @@ class Generator:
 
     @staticmethod
     def generate(
-        establishments: list[Establishment], num_carriers: int
+        establishments: list[Establishment],
+        num_carriers: int,  # pylint: disable=unused-argument
     ) -> tuple[list[Establishment], list[Establishment]]:
         """
         Generates a sample of establishments
