@@ -1,3 +1,6 @@
+# pylint: skip-file
+# TODO: handle this
+
 """
 Functions and classes related to the application
 """
@@ -5,7 +8,7 @@ Functions and classes related to the application
 from typing import Callable
 import pygame
 from pygame import constants
-from visualization import Visualization
+from app.visualization import Visualization
 
 
 class App:

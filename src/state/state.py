@@ -5,8 +5,8 @@ State representation in this simulation
 
 from copy import deepcopy
 from debug import Printable
-from graph import Graph
-from models import Brigade, Establishment
+from graph.graph import Graph
+from models import Brigade
 
 
 class State(Printable):
@@ -16,20 +16,16 @@ class State(Printable):
 
     def __init__(
         self,
-        establishments: list[Establishment],
         brigades: list[Brigade],
-        network: Graph,
     ):
-        self.establishments = establishments
         self.brigades = brigades
-        self.network = network
 
-    def value(self) -> float:
+    def value(self, network: Graph) -> float:
         """
         Returns the value of the current state, to be used in evaluation functions
         """
 
-        return 0.0
+        return sum(map(lambda b: b.total_waiting_time(network), self.brigades), 0)
 
     def copy(self):
         """
