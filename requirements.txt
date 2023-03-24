@@ -2,3 +2,4 @@ pygame
 numpy
 scipy
 python-dotenv
+pygame-gui

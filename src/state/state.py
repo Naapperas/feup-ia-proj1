@@ -25,7 +25,7 @@ class State(Printable):
         """
         Returns the value of the current state, to be used in evaluation functions.
 
-        This value is based on the current network 
+        This value is based on the current network
         which tells how the different routes are connected
         """
 
