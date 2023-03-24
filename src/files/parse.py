@@ -2,10 +2,9 @@
 Logic related to parsing a text file
 """
 
-import math
-from typing import Dict, Any, Generator
-
 import csv
+import math
+from typing import Any, Dict, Generator
 
 
 def parse_file(

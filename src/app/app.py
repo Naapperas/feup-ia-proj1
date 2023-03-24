@@ -9,11 +9,7 @@ import pygame
 import pygame_gui
 from pygame import constants
 
-from graph import parse_graph
-
-# from models import Establishment, parse_model
 from simulation import Simulation
-from simulation.state import State
 
 from .events import event, handle_events, listener
 from .visualization import Visualization

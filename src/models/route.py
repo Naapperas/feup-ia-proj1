@@ -3,6 +3,7 @@ Classes and methods related to routes
 """
 
 from typing import Iterable, Iterator, SupportsIndex, overload
+
 from debug import Printable
 from models.establishment import Establishment
 

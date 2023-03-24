@@ -3,6 +3,7 @@ Configuration related methods and classes go here
 """
 
 import os
+
 from dotenv import dotenv_values
 
 

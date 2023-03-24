@@ -3,8 +3,8 @@ Classes and methods related to coordinates
 """
 
 import sys
-from typing import ClassVar
 from dataclasses import dataclass
+from typing import ClassVar
 
 import numpy as np
 

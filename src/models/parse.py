@@ -2,7 +2,7 @@
 Logic related to parsing models out of text
 """
 
-from typing import Callable, Type, TypeVar, Any
+from typing import Any, Callable, Type, TypeVar
 
 from files import parse_file
 
@@ -22,11 +22,11 @@ class Parsable:  # pylint: disable=too-few-public-methods
 
 
 FT_co = TypeVar("FT_co", bound=Type, covariant=True)
-Data_T = TypeVar("Data_T")
+DicDT = TypeVar("DicDT")
 
 
 def get_named_field(
-    data: dict[str, Data_T], field_name: str, field_type: Callable[[Data_T], FT_co]
+    data: dict[str, DicDT], field_name: str, field_type: Callable[[DicDT], FT_co]
 ) -> FT_co:
     """
     Gets a field from the given data dict using the given name,

@@ -50,6 +50,10 @@ class Visualization:
         self.scaled_map = pygame.transform.scale_by(self.map, self.zoom)
 
     def scale_map(self):
+        """
+        Scales this visualization's map according to its zoom level
+        """
+
         self.scaled_map = pygame.transform.scale_by(self.map, self.zoom)
 
     def draw(self, screen: pygame.Surface, simulation: Simulation):
@@ -183,20 +187,19 @@ class Visualization:
         return -10 <= coords[0] <= 1024 + 10 and -10 <= coords[1] <= 1024 + 10
 
     @event(pygame.constants.MOUSEMOTION, buttons=(1, 0, 0))
-    def on_pan(self, event: pygame.event.Event):
+    def on_pan(self, _event: pygame.event.Event):
         """
         Handler for mouse movements when the left mouse button is pressed
         """
-        self.translation = self.screen_to_map(negative(event.rel))
+        self.translation = self.screen_to_map(negative(_event.rel))
         self.clamp_values()
-        print(event)
 
     @event(pygame.constants.MOUSEWHEEL)
-    def on_zoom(self, event: pygame.event.Event):
+    def on_zoom(self, _event: pygame.event.Event):
         """
         Handler for mouse zooms
         """
-        self.zoom += event.y
+        self.zoom += _event.y
         self.clamp_values()
         self.scale_map()
 

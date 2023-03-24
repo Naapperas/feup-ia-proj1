@@ -3,6 +3,7 @@ Logic related to parsing the problem's graph out of a text file
 """
 
 from files import parse_file
+
 from .graph import *
 
 

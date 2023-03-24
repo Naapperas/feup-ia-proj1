@@ -6,6 +6,7 @@ from copy import deepcopy
 from random import sample
 
 from models.establishment import Establishment
+
 from .generator import Generator
 
 

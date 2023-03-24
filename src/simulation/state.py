@@ -7,7 +7,6 @@ from copy import deepcopy
 from typing import Type
 
 from debug import Printable
-from graph.graph import Graph
 from models import Brigade
 from models.establishment import Establishment
 from models.route import Route

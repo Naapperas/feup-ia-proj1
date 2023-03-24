@@ -4,8 +4,8 @@ Classes and methods related to running the simulation of the problem
 
 
 import math
-from graph import parse_graph
 
+from graph import parse_graph
 from graph.graph import Graph
 from models.establishment import Establishment
 from models.parse import parse_model
