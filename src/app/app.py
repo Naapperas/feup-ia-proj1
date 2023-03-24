@@ -8,13 +8,14 @@ Functions and classes related to the application
 import pygame
 import pygame_gui
 from pygame import constants
-from .visualization import Visualization
-from simulation import Simulation
-from .events import listener, event, handle_events
 
-from models import parse_model, Establishment
 from graph import parse_graph
-from state.state import State
+from models import Establishment, parse_model
+from simulation import Simulation
+from simulation.state import State
+
+from .events import event, handle_events, listener
+from .visualization import Visualization
 
 # For development purposes
 _NUM_MODELS_TO_PARSE: int = 20

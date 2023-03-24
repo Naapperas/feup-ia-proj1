@@ -4,9 +4,10 @@ Classes and methods related to running the simulation of the problem
 
 
 import math
+
 from graph.graph import Graph
 from models.establishment import Establishment
-from state.state import State
+from simulation.state import State
 
 
 class Simulation:
