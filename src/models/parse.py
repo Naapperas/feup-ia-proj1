@@ -21,13 +21,12 @@ class Parsable:  # pylint: disable=too-few-public-methods
         return Parsable()
 
 
-Model = TypeVar("Model", bound=Parsable)
-
 FT_co = TypeVar("FT_co", bound=Type, covariant=True)
+Data_T = TypeVar("Data_T")
 
 
 def get_named_field(
-    data: dict[str, Any], field_name: str, field_type: Callable[[Any], FT_co]
+    data: dict[str, Data_T], field_name: str, field_type: Callable[[Data_T], FT_co]
 ) -> FT_co:
     """
     Gets a field from the given data dict using the given name,
@@ -39,14 +38,22 @@ def get_named_field(
     return field_type(field)
 
 
-def parse_model(file: str, model: Type[Model]) -> list[Model]:
+Model = TypeVar("Model", bound=Parsable)
+
+
+def parse_model(file: str, model: Type[Model], max_lines_parsed=-1) -> list[Model]:
     """
-    Parses a CSV file and returns an array of the specified model
+    Parses a CSV file and returns an array of the specified model.
+
+    Can optionally specify the amount of lines to parse from the file:
+    a negative value indicates that all lines should be parsed.
     """
 
-    models: list[Model] = []
+    # FIXME: typechecking
+    # models: list[Model] = []
+    models = []
 
-    for line in parse_file(file):
+    for line in parse_file(file, max_lines_parsed):
         model_data = dict(line.items())  # this is ugly but at least we get types
 
         models.append(model.parse(model_data))

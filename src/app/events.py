@@ -36,7 +36,7 @@ def handle_events(app):
     for event in pygame.event.get():
         app.gui_manager.process_events(event)
 
-        for filter, fun in events[event.type]:
-            if filter.items() <= event.dict.items():
-                for type in listeners[fun.__qualname__.split(".")[0]]:
-                    fun(type, event)
+        for _filter, fun in events[event.type]:
+            if _filter.items() <= event.dict.items():
+                for _type in listeners[fun.__qualname__.split(".")[0]]:
+                    fun(_type, event)

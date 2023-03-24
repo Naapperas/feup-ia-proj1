@@ -2,13 +2,14 @@
 Functions and classes related to the application
 """
 
-import pygame
-from numpy import clip, negative
-from app.events import event, listener
-from simulation import Simulation
 from itertools import pairwise
 
+import pygame
+from numpy import clip, negative
+
+from app.events import event, listener
 from models.coords import Coords
+from simulation import Simulation
 
 MIN_LAT = 41.01793
 MAX_LAT = 41.46618
@@ -169,13 +170,21 @@ class Visualization:
         """
         self.translation = self.screen_to_map(negative(event.rel))
         self.clamp_values()
+        print(event)
 
     @event(pygame.constants.MOUSEWHEEL)
     def on_zoom(self, event: pygame.event.Event):
+        """
+        Handler for mouse zooms
+        """
         self.zoom += event.y
         self.clamp_values()
         self.scale_map()
 
     def clamp_values(self):
+        """
+        Clamps this visualization's relevant values to their value interval
+        """
+
         self.zoom = clip(self.zoom, 1, 10)
         self.translation = clip(self.translation, 0, 1024 - 1024 / self.zoom)

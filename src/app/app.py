@@ -10,12 +10,14 @@ import pygame_gui
 from pygame import constants
 from .visualization import Visualization
 from simulation import Simulation
-from simulation.heuristics.initial_state import initial_state
 from .events import listener, event, handle_events
 
 from models import parse_model, Establishment
 from graph import parse_graph
 from state.state import State
+
+# For development purposes
+_NUM_MODELS_TO_PARSE: int = 20
 
 
 class App:
@@ -43,14 +45,16 @@ class App:
         """
         Sets up the simulation
         """
-        establishments = parse_model("./resources/establishments.csv", Establishment)
+        establishments = parse_model(
+            "./resources/establishments.csv", Establishment, _NUM_MODELS_TO_PARSE
+        )
         network = parse_graph("./resources/distances.csv")
 
         depot, establishments = establishments[0], establishments[1:]
 
         num_carriers: int = Simulation.get_num_carriers(establishments)
 
-        state: State = initial_state(establishments, num_carriers)
+        state: State = State.initial_state(establishments, num_carriers)
 
         self.simulation = Simulation(depot, state, network, establishments)
 
@@ -68,7 +72,7 @@ class App:
             self.gui_manager.draw_ui(self.screen)
             pygame.display.flip()
 
-    @event(constants.QUIT)
+    @event(constants.QUIT, constants.K_q)
     def on_quit(self, _event: pygame.event.Event):
         """
         Handler called when quitting the visualization
