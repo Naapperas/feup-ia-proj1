@@ -2,5 +2,5 @@
 Generator function for the initial state
 """
 
-from .generator import Generator
+from .generator import *
 from .random import *

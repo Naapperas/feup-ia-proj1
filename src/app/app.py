@@ -10,15 +10,13 @@ import pygame_gui
 from pygame import constants
 
 from graph import parse_graph
-from models import Establishment, parse_model
+
+# from models import Establishment, parse_model
 from simulation import Simulation
 from simulation.state import State
 
 from .events import event, handle_events, listener
 from .visualization import Visualization
-
-# For development purposes
-_NUM_MODELS_TO_PARSE: int = 20
 
 
 class App:
@@ -40,24 +38,7 @@ class App:
         self.running = True
 
         self.visualization = Visualization()
-        self.setup_simulation()
-
-    def setup_simulation(self):
-        """
-        Sets up the simulation
-        """
-        establishments = parse_model(
-            "./resources/establishments.csv", Establishment, _NUM_MODELS_TO_PARSE
-        )
-        network = parse_graph("./resources/distances.csv")
-
-        depot, establishments = establishments[0], establishments[1:]
-
-        num_carriers: int = Simulation.get_num_carriers(establishments)
-
-        state: State = State.initial_state(establishments, num_carriers)
-
-        self.simulation = Simulation(depot, state, network, establishments)
+        self.simulation = Simulation.setup()
 
     def loop(self):
         """

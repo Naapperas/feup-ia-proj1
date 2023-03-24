@@ -13,6 +13,7 @@ from models.establishment import Establishment
 from models.route import Route
 from simulation.heuristics.initial_state.generator import Generator
 from simulation.heuristics.initial_state.random import RandomGenerator
+from simulation.network import Network
 
 
 class State(Printable):
@@ -57,7 +58,7 @@ class State(Printable):
 
         return State(brigades)
 
-    def value(self, network: Graph, depot: Establishment) -> float:
+    def value(self, network: Network) -> float:
         """
         Returns the value of the current state, to be used in evaluation functions.
 
@@ -65,9 +66,7 @@ class State(Printable):
         which tells how the different routes are connected
         """
 
-        return sum(
-            map(lambda b: b.total_waiting_time(network, depot), self.brigades), 0
-        )
+        return sum(map(lambda b: b.total_waiting_time(network), self.brigades), 0)
 
     def copy(self):
         """

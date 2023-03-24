@@ -3,9 +3,8 @@ Classes and methods related to brigades
 """
 
 from debug import Printable
-from graph.graph import Graph
-from models.establishment import Establishment
 from models.route import Route
+from simulation.network import Network
 
 
 class Brigade(Printable):
@@ -16,7 +15,7 @@ class Brigade(Printable):
     def __init__(self, route: Route):
         self.route = route
 
-    def total_waiting_time(self, network: Graph, depot: Establishment) -> int:
+    def total_waiting_time(self, network: Network) -> int:
         """
         Returns the total waiting time for this brigade
         across its route's establishments

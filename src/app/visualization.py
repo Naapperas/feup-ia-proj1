@@ -8,8 +8,11 @@ import pygame
 from numpy import clip, negative
 
 from app.events import event, listener
+from models.brigade import Brigade
 from models.coords import Coords
+from models.establishment import Establishment
 from simulation import Simulation
+from simulation.state import State
 
 MIN_LAT = 41.01793
 MAX_LAT = 41.46618
@@ -54,38 +57,54 @@ class Visualization:
         Draws this map on the given surfaces
         """
         screen.blit(self.scaled_map, self.map_to_screen())
-        self.draw_state(screen, simulation)
-        self.draw_establishments(screen, simulation)
+        self.draw_state(screen, simulation.state)
+        self.draw_establishments(screen, simulation.establishments)
+        self.draw_establishment(screen, simulation.network.depot, color=(0, 255, 0))
 
-    def draw_state(self, screen: pygame.Surface, simulation: Simulation):
+    def draw_state(self, screen: pygame.Surface, state: State):
         """
         Draws the current state of the simulation
         """
-        for brigade in simulation.state.brigades:
-            for start, end in pairwise(brigade.route):
-                start = self.world_to_screen(start.coords)
-                end = self.world_to_screen(end.coords)
-                if self.rect_in_screen((*start, *end)):
-                    pygame.draw.line(
-                        screen,
-                        (0, 0, 255),
-                        start,
-                        end,
-                        2,
-                    )
+        for brigade in state.brigades:
+            self.draw_brigade(screen, brigade)
 
-    def draw_establishments(self, screen: pygame.Surface, simulation: Simulation):
+    def draw_brigade(self, screen: pygame.Surface, brigade: Brigade):
+        """
+        Draws the given brigade's route on the given surface
+        """
+
+        for start, end in pairwise(brigade.route):
+            start = self.world_to_screen(start.coords)
+            end = self.world_to_screen(end.coords)
+            if self.rect_in_screen((*start, *end)):
+                pygame.draw.line(
+                    screen,
+                    (0, 0, 255),
+                    start,
+                    end,
+                    2,
+                )
+
+    def draw_establishments(
+        self, screen: pygame.Surface, establishments: list[Establishment]
+    ):
         """
         Draws the establishments on the given surface
         """
-        for establishment in simulation.establishments:
-            coords = self.world_to_screen(establishment.coords)
-            if self.in_screen_loose(coords):
-                pygame.draw.circle(screen, (255, 0, 0), coords, 5)
 
-        coords = self.world_to_screen(simulation.depot.coords)
+        for establishment in establishments:
+            self.draw_establishment(screen, establishment)
+
+    def draw_establishment(
+        self, screen: pygame.Surface, establishment: Establishment, color=(255, 0, 0)
+    ):
+        """
+        Draws the given establishment on the given surface
+        """
+
+        coords = self.world_to_screen(establishment.coords)
         if self.in_screen_loose(coords):
-            pygame.draw.circle(screen, (0, 255, 0), coords, 5)
+            pygame.draw.circle(screen, color, coords, 5)
 
     def map_to_world(self, coords: tuple[float, float] = (0, 0)) -> Coords:
         """
