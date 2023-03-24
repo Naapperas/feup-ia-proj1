@@ -5,15 +5,15 @@ Classes and methods related to running the simulation of the problem
 
 import math
 
-from graph import parse_graph
-from graph.graph import Graph
+from config import Config
+from simulation.graph import Graph, parse_graph
 from models.establishment import Establishment
 from models.parse import parse_model
 from simulation.network import Network
 from simulation.state import State
 
 # For development purposes
-_NUM_MODELS_TO_PARSE: int = 20
+_NUM_MODELS_TO_PARSE: int = int(Config.get("NUM_MODELS_TO_PARSE"))
 
 
 class Simulation:

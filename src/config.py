@@ -7,7 +7,7 @@ import os
 from dotenv import dotenv_values
 
 
-class Config:
+class _Config:
     """
     App wide configuration values
     """
@@ -33,3 +33,6 @@ class Config:
         Sets the given value associated to the given config key
         """
         self.__dict__[key] = value
+
+
+Config = _Config()

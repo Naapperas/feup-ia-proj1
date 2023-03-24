@@ -8,6 +8,7 @@ Functions and classes related to the application
 import pygame
 import pygame_gui
 from pygame import constants
+from config import Config
 
 from simulation import Simulation
 
@@ -24,7 +25,7 @@ class App:
         pygame.init()
         listener(self)
 
-        pygame.display.set_caption("ASAE Inspection Routes")
+        pygame.display.set_caption(Config.get("DISPLAY_TITLE"))
         self.screen = pygame.display.set_mode(
             (1024, 1024), constants.RESIZABLE | constants.DOUBLEBUF, vsync=True
         )

@@ -17,21 +17,39 @@ class Brigade(Printable):
 
     def total_waiting_time(self, network: Network) -> int:
         """
-        Returns the total waiting time for this brigade
+        Returns the total waiting time in seconds for this brigade
         across its route's establishments
         """
 
+        graph = network.graph
+        depot = network.depot
+
         total_waiting_time: int = 0
 
-        # assume inspection starts at 9am
-        start_time = (9, 0, 0)
-        previous_establishment = self.route[0]
+        START_TIME = 9 * 60 * 60  # assume inspection starts at 9ams
+        previous_establishment = depot
 
-        # TODO: get time from depot to first establishment
+        cur_time = START_TIME
 
-        cur_time = (start_time[0], start_time[1], start_time[2])
+        for establishment in self.route:
+            time_to_arrive = graph.get(
+                previous_establishment.establishment_id, establishment.establishment_id
+            )
+            cur_time += time_to_arrive  # simulate the brigade's trip
 
-        for establishment in self.route[1:]:
-            pass
+            # TODO: calculate waiting time according to the establishment's availability
+            opening_hours = establishment.opening_hours
+            cur_hour = (cur_time // 3600) % 24
+
+            # use only opening hours in the future relative to us
+            future_hours = opening_hours[cur_hour - 1 :]
+
+            waiting_time = 0
+
+            cur_time += waiting_time
+            total_waiting_time += waiting_time
+
+            cur_time += establishment.inspection_data.inspection_time * 60
+            previous_establishment = establishment
 
         return total_waiting_time

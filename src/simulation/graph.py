@@ -4,6 +4,7 @@ Functions and classes related to graphs
 
 import numpy as np
 
+from files import parse_file
 from debug import Printable
 
 
@@ -35,3 +36,17 @@ class Graph(Printable):
         """
 
         return self.mat[first_establishment_id, second_establishment_id]
+
+
+def parse_graph(file: str) -> Graph:
+    """
+    Parses an input file and returns a dense graph representing its data
+    """
+    mat = []
+
+    for line in parse_file(file):
+        line = list(line.values())[1:]
+
+        mat.append(list(map(float, line)))
+
+    return Graph(mat)
