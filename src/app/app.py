@@ -12,6 +12,8 @@ from pygame import constants
 from config import Config
 
 from simulation import Simulation
+from simulation.state import State
+from simulation.heuristics.initial_state.closest import ClosestGenerator
 
 from .events import event, handle_events, listener
 from .visualization import Visualization
@@ -165,7 +167,14 @@ class App:
         Handler called when a button is pressed
         """
 
-        # self.main_menu.hide()
+        self.main_menu.hide()
+        if self.simulation is not None:
+            self.simulation.state = State.initial_state(
+                self.simulation.establishments,
+                self.simulation.network,
+                self.simulation.get_num_carriers(),
+                ClosestGenerator,
+            )
 
     @event(
         pygame_gui.UI_HORIZONTAL_SLIDER_MOVED,

@@ -25,7 +25,6 @@ class Simulation:
     ):
         self.establishments = establishments
         self.num_establishments = len(establishments)
-        # self.state = State.initial_state(establishments, self.get_num_carriers())
         self.state = State([])
         self.network = Network(depot, graph)
 

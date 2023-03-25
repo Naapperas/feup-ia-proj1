@@ -1,17 +1,12 @@
-"""
-Initial State Generator
-"""
-
 from models.establishment import Establishment
 from ...graph import Graph
 
+from .generator import Generator
 
-class Generator:  # pylint: disable=too-few-public-methods
+
+class ClosestGenerator(Generator):
     """
-    Generator class that has a method **generate**
-    that takes a list of establishments and the desired number of carriers
-    and generates a sample from the same list to be used
-    in the initial state of the simulation
+    Generator that takes the closest establishment from the previous one
     """
 
     @staticmethod
@@ -29,4 +24,13 @@ class Generator:  # pylint: disable=too-few-public-methods
         The default implementation takes no sample and returns its parameter
         """
 
-        return establishments.popitem()[1]
+        closest, _ = min(
+            (
+                (i, d)
+                for i, d in enumerate(graph.get_col(previous.establishment_id))
+                if i in establishments
+            ),
+            key=lambda x: x[1],
+        )
+
+        return establishments[closest]

@@ -35,7 +35,9 @@ class Visualization:
     """
 
     __slots__ = [
+        "flag",
         "map",
+        "pin",
         "scaled_map",
         "translation",
         "zoom",
@@ -47,6 +49,12 @@ class Visualization:
         self.translation = (0, 0)
 
         self.map = pygame.image.load("resources/Porto.png").convert()
+        self.pin = pygame.transform.scale_by(
+            pygame.image.load("resources/pin.png").convert_alpha(), 2
+        )
+        self.flag = pygame.transform.scale_by(
+            pygame.image.load("resources/flag.png").convert_alpha(), 2
+        )
         self.scaled_map = pygame.transform.scale_by(self.map, self.zoom)
 
     def scale_map(self):
@@ -67,14 +75,19 @@ class Visualization:
             self.draw_establishments(
                 screen, simulation.establishments[: simulation.num_establishments]
             )
-            self.draw_establishment(screen, simulation.network.depot, color=(0, 255, 0))
+            self.draw_establishment(screen, simulation.network.depot, True)
 
     def draw_state(self, screen: pygame.Surface, state: State):
         """
         Draws the current state of the simulation
         """
+        size = screen.get_size()
+        scaled = pygame.Surface((size[0] // 2, size[1] // 2), pygame.SRCALPHA)
+
         for brigade in state.brigades:
-            self.draw_brigade(screen, brigade)
+            self.draw_brigade(scaled, brigade)
+
+        screen.blit(pygame.transform.scale(scaled, size), (0, 0))
 
     def draw_brigade(self, screen: pygame.Surface, brigade: Brigade):
         """
@@ -87,10 +100,10 @@ class Visualization:
             if self.rect_in_screen((*start, *end)):
                 pygame.draw.line(
                     screen,
-                    (0, 0, 255),
-                    start,
-                    end,
-                    2,
+                    (0, 0, 0),
+                    (start[0] / 2, start[1] / 2),
+                    (end[0] / 2, end[1] / 2),
+                    1,
                 )
 
     def draw_establishments(
@@ -104,7 +117,7 @@ class Visualization:
             self.draw_establishment(screen, establishment)
 
     def draw_establishment(
-        self, screen: pygame.Surface, establishment: Establishment, color=(255, 0, 0)
+        self, screen: pygame.Surface, establishment: Establishment, is_depot=False
     ):
         """
         Draws the given establishment on the given surface
@@ -112,7 +125,13 @@ class Visualization:
 
         coords = self.world_to_screen(establishment.coords)
         if self.in_screen_loose(coords):
-            pygame.draw.circle(screen, color, coords, 5)
+            screen.blit(
+                self.flag if is_depot else self.pin,
+                (
+                    coords[0] - self.pin.get_width() // 2,
+                    coords[1] - self.pin.get_height(),
+                ),
+            )
 
     def map_to_world(self, coords: tuple[float, float] = (0, 0)) -> Coords:
         """
@@ -188,7 +207,7 @@ class Visualization:
         """
         Checks if the given coordinates are within the screen
         """
-        return -10 <= coords[0] <= 1024 + 10 and -10 <= coords[1] <= 1024 + 10
+        return -50 <= coords[0] <= 1024 + 50 and -50 <= coords[1] <= 1024 + 50
 
     @event(pygame.constants.MOUSEMOTION, buttons=(1, 0, 0))
     def on_pan(self, _event: pygame.event.Event):

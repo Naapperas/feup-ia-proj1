@@ -13,6 +13,7 @@ from models.route import Route
 from simulation.heuristics.initial_state.generator import Generator
 from simulation.heuristics.initial_state.random import RandomGenerator
 from simulation.network import Network
+from simulation.graph import Graph
 
 
 class State(Printable):
@@ -29,6 +30,7 @@ class State(Printable):
     @staticmethod
     def initial_state(
         establishments: list[Establishment],
+        network: Network,
         num_carriers: int,
         generator: Type[Generator] = RandomGenerator,
     ) -> "State":
@@ -39,23 +41,20 @@ class State(Printable):
         By default it uses a random generator to generate the initial state
         """
 
-        brigades: list[Brigade] = []
+        brigades = [[network.depot] for _ in range(num_carriers)]
 
-        establishments_copy = deepcopy(establishments)
+        establishments_copy = {e.establishment_id: e for e in establishments}
 
-        for _ in range(num_carriers):
-            route_establishments, establishments_copy = generator.generate(
-                establishments_copy, num_carriers
-            )
+        while len(establishments_copy) > 0:
+            for i, b in enumerate(brigades):
+                previous = b[-1]
+                establishment = generator.next(
+                    establishments_copy, previous, network.graph
+                )
+                establishments_copy.pop(establishment.establishment_id)
+                brigades[i].append(establishment)
 
-            route: Route = Route(
-                route_establishments
-            )  # do this in order to correctly model other calculations
-            brigade: Brigade = Brigade(route)
-
-            brigades.append(brigade)
-
-        return State(brigades)
+        return State([Brigade(Route(b)) for b in brigades])
 
     def value(self, network: Network) -> float:
         """
