@@ -21,16 +21,8 @@ def parse_file(
     if max_lines_read == 0:
         return
 
-    limit: float = math.inf if max_lines_read < 0 else float(max_lines_read)
-    counter: int = 1
-
     with open(file_path, mode="r", encoding="utf-8") as file:
         reader = csv.DictReader(file, delimiter=",")
 
         for line in reader:
-            if counter > limit:
-                break
-
             yield line
-
-            counter += 1

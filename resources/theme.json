@@ -1,0 +1,75 @@
+{
+    "defaults": {
+        "colours": {
+            "normal_bg": "#444444aa",
+            "hovered_bg": "#444444dd",
+            "disabled_bg": "#25292e",
+            "selected_bg": "#444444dd",
+            "active_bg": "#444444ff",
+            "dark_bg": "#00000000",
+
+            "text_shadow": "#444444aa",
+
+            "normal_text": "#FFFFFF",
+            "hovered_text": "#FFFFFF",
+            "selected_text": "#FFFFFF",
+            "disabled_text": "#999999",
+            "active_text": "#FFFFFF",
+
+            "normal_border": "#FFFFFF",
+            "hovered_border": "#FFFFFF",
+            "selected_border": "#FFFFFF",
+            "disabled_border": "#999999",
+            "active_border": "#FFFFFF"
+        }
+    },
+    "label": {
+        "misc": {
+            "text_shadow_size": "1",
+            "text_shadow_offset": "1,1"
+        },
+        "font": {
+            "name": "Minecraftia",
+            "size": "16",
+            "regular_path": "resources/font.ttf"
+        }
+    },
+    "#big": {
+        "font": {
+            "name": "Minecraftia",
+            "size": "32",
+            "regular_path": "resources/font.ttf"
+        }
+    },
+    "button": {
+        "misc": {
+            "shadow_width": "0",
+            "border_width": "2"
+        },
+        "font": {
+            "name": "Minecraftia",
+            "size": "16",
+            "regular_path": "resources/font.ttf"
+        }
+    },
+    "horizontal_slider": {
+        "misc": {
+            "sliding_button_width": "32",
+            "border_width": "2",
+            "enable_arrow_buttons": "0",
+            "shadow_width": "0"
+        }
+    },
+    "horizontal_slider.#sliding_button": {
+        "misc": {
+            "border_width": "2",
+            "shadow_width": "0"
+        }
+    },
+    "panel": {
+        "misc": {
+            "border_width": "0",
+            "shadow_width": "0"
+        }
+    }
+}

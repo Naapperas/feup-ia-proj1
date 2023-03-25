@@ -46,7 +46,7 @@ class Visualization:
         self.zoom = 1
         self.translation = (0, 0)
 
-        self.map = pygame.image.load("resources/Porto.png")
+        self.map = pygame.image.load("resources/Porto.png").convert()
         self.scaled_map = pygame.transform.scale_by(self.map, self.zoom)
 
     def scale_map(self):
@@ -56,14 +56,18 @@ class Visualization:
 
         self.scaled_map = pygame.transform.scale_by(self.map, self.zoom)
 
-    def draw(self, screen: pygame.Surface, simulation: Simulation):
+    def draw(self, screen: pygame.Surface, simulation: Simulation | None):
         """
         Draws this map on the given surfaces
         """
         screen.blit(self.scaled_map, self.map_to_screen())
-        self.draw_state(screen, simulation.state)
-        self.draw_establishments(screen, simulation.establishments)
-        self.draw_establishment(screen, simulation.network.depot, color=(0, 255, 0))
+
+        if simulation is not None:
+            self.draw_state(screen, simulation.state)
+            self.draw_establishments(
+                screen, simulation.establishments[: simulation.num_establishments]
+            )
+            self.draw_establishment(screen, simulation.network.depot, color=(0, 255, 0))
 
     def draw_state(self, screen: pygame.Surface, state: State):
         """
@@ -199,7 +203,10 @@ class Visualization:
         """
         Handler for mouse zooms
         """
+        pos = pygame.mouse.get_pos()
+        self.translation = self.screen_to_map(pos)
         self.zoom += _event.y
+        self.translation = self.screen_to_map(tuple(negative(pos)))
         self.clamp_values()
         self.scale_map()
 
