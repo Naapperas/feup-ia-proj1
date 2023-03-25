@@ -126,6 +126,7 @@ class App:
         """
 
         self.simulation = Simulation.setup()
+        self.visualization.redraw(self.simulation)
         self.loading.hide()
         self.main_menu.show()
         self.establishments_slider.value_range = (
@@ -142,14 +143,14 @@ class App:
         The pygame visualization's event loop
         """
         while self.running:
-            self.delta_t = self.clock.tick(200) / 1000.0
+            self.delta_t = self.clock.tick() / 1000.0
             self.gui_manager.update(self.delta_t)
 
             print(f"{self.clock.get_fps():.2f} FPS      ", end="\r")
 
             handle_events(self)
 
-            self.visualization.draw(self.screen, self.simulation)
+            self.visualization.draw(self.screen)
             self.gui_manager.draw_ui(self.screen)
             pygame.display.flip()
 
@@ -168,6 +169,10 @@ class App:
         """
 
         self.main_menu.hide()
+        self.loading.show()
+        threading.Thread(target=self.initial_state).start()
+
+    def initial_state(self):
         if self.simulation is not None:
             self.simulation.state = State.initial_state(
                 self.simulation.establishments,
@@ -175,6 +180,8 @@ class App:
                 self.simulation.get_num_carriers(),
                 ClosestGenerator,
             )
+            self.visualization.redraw(self.simulation)
+        self.loading.hide()
 
     @event(
         pygame_gui.UI_HORIZONTAL_SLIDER_MOVED,

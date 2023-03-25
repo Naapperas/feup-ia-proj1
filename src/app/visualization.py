@@ -35,10 +35,11 @@ class Visualization:
     """
 
     __slots__ = [
+        "cache",
         "flag",
         "map",
         "pin",
-        "scaled_map",
+        "drawn_map",
         "translation",
         "zoom",
     ]
@@ -55,83 +56,92 @@ class Visualization:
         self.flag = pygame.transform.scale_by(
             pygame.image.load("resources/flag.png").convert_alpha(), 2
         )
-        self.scaled_map = pygame.transform.scale_by(self.map, self.zoom)
 
-    def scale_map(self):
+        self.cache: tuple[
+            tuple[float, float],
+            list[tuple[float, float]],
+            list[list[tuple[float, float]]],
+        ] = ((0, 0), [], [])
+
+        self.redraw_map()
+
+    def redraw_map(self):
         """
         Scales this visualization's map according to its zoom level
         """
 
-        self.scaled_map = pygame.transform.scale_by(self.map, self.zoom)
+        self.drawn_map = pygame.transform.scale_by(self.map, self.zoom)
 
-    def draw(self, screen: pygame.Surface, simulation: Simulation | None):
+        self.redraw_brigades()
+        self.redraw_establishments()
+        self.redraw_establishment(self.cache[0], True)
+
+    def redraw(self, simulation: Simulation):
+        self.cache = (
+            self.world_to_map(simulation.network.depot.coords),
+            [self.world_to_map(e.coords) for e in simulation.establishments],
+            [
+                [self.world_to_map(e.coords) for e in b.route.route_establishments]
+                for b in simulation.state.brigades
+            ],
+        )
+
+        self.redraw_map()
+
+    def draw(self, screen: pygame.Surface):
         """
         Draws this map on the given surfaces
         """
-        screen.blit(self.scaled_map, self.map_to_screen())
+        screen.blit(self.drawn_map, self.map_to_screen())
 
-        if simulation is not None:
-            self.draw_state(screen, simulation.state)
-            self.draw_establishments(
-                screen, simulation.establishments[: simulation.num_establishments]
-            )
-            self.draw_establishment(screen, simulation.network.depot, True)
-
-    def draw_state(self, screen: pygame.Surface, state: State):
+    def redraw_brigades(self):
         """
         Draws the current state of the simulation
         """
-        size = screen.get_size()
+        size = self.drawn_map.get_size()
         scaled = pygame.Surface((size[0] // 2, size[1] // 2), pygame.SRCALPHA)
 
-        for brigade in state.brigades:
-            self.draw_brigade(scaled, brigade)
+        for brigade in self.cache[2]:
+            self.redraw_brigade(scaled, brigade)
 
-        screen.blit(pygame.transform.scale(scaled, size), (0, 0))
+        self.drawn_map.blit(pygame.transform.scale(scaled, size), (0, 0))
 
-    def draw_brigade(self, screen: pygame.Surface, brigade: Brigade):
+    def redraw_brigade(
+        self, surface: pygame.Surface, brigade: list[tuple[float, float]]
+    ):
         """
         Draws the given brigade's route on the given surface
         """
 
-        for start, end in pairwise(brigade.route):
-            start = self.world_to_screen(start.coords)
-            end = self.world_to_screen(end.coords)
-            if self.rect_in_screen((*start, *end)):
-                pygame.draw.line(
-                    screen,
-                    (0, 0, 0),
-                    (start[0] / 2, start[1] / 2),
-                    (end[0] / 2, end[1] / 2),
-                    1,
-                )
+        for start, end in pairwise(brigade):
+            pygame.draw.line(
+                surface,
+                (0, 0, 0),
+                (start[0] * self.zoom / 2, start[1] * self.zoom / 2),
+                (end[0] * self.zoom / 2, end[1] * self.zoom / 2),
+                1,
+            )
 
-    def draw_establishments(
-        self, screen: pygame.Surface, establishments: list[Establishment]
-    ):
+    def redraw_establishments(self):
         """
         Draws the establishments on the given surface
         """
 
-        for establishment in establishments:
-            self.draw_establishment(screen, establishment)
+        for establishment in self.cache[1]:
+            self.redraw_establishment(establishment)
 
-    def draw_establishment(
-        self, screen: pygame.Surface, establishment: Establishment, is_depot=False
-    ):
+    def redraw_establishment(self, coords: tuple[float, float], is_depot=False):
         """
         Draws the given establishment on the given surface
         """
 
-        coords = self.world_to_screen(establishment.coords)
-        if self.in_screen_loose(coords):
-            screen.blit(
-                self.flag if is_depot else self.pin,
-                (
-                    coords[0] - self.pin.get_width() // 2,
-                    coords[1] - self.pin.get_height(),
-                ),
-            )
+        self.drawn_map.blit(
+            self.flag if is_depot else self.pin,
+            (
+                coords[0] * self.zoom - self.pin.get_width() // 2,
+                coords[1] * self.zoom - self.pin.get_height(),
+            ),
+        )
 
     def map_to_world(self, coords: tuple[float, float] = (0, 0)) -> Coords:
         """
@@ -227,7 +237,7 @@ class Visualization:
         self.zoom += _event.y
         self.translation = self.screen_to_map(tuple(negative(pos)))
         self.clamp_values()
-        self.scale_map()
+        self.redraw_map()
 
     def clamp_values(self):
         """
