@@ -9,11 +9,10 @@ from typing import Type
 from debug import Printable
 from models import Brigade
 from models.establishment import Establishment
+from models.network import Network
 from models.route import Route
 from simulation.heuristics.initial_state.generator import Generator
 from simulation.heuristics.initial_state.random import RandomGenerator
-from simulation.network import Network
-from simulation.graph import Graph
 
 
 class State(Printable):
@@ -46,15 +45,15 @@ class State(Printable):
         establishments_copy = {e.establishment_id: e for e in establishments}
 
         while len(establishments_copy) > 0:
-            for i, b in enumerate(brigades):
-                previous = b[-1]
+            for brigade in brigades:
+                previous = brigade[-1]
                 establishment = generator.next(
                     establishments_copy, previous, network.graph
                 )
                 establishments_copy.pop(establishment.establishment_id)
-                brigades[i].append(establishment)
+                brigade.append(establishment)
 
-        return State([Brigade(Route(b)) for b in brigades])
+        return State([Brigade(Route(brigade)) for brigade in brigades])
 
     def value(self, network: Network) -> float:
         """
@@ -71,4 +70,5 @@ class State(Printable):
         Returns a copy of this state that can be modified without
         persisting changes to this instance
         """
+
         return deepcopy(self)

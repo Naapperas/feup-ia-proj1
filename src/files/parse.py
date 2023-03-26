@@ -3,7 +3,6 @@ Logic related to parsing a text file
 """
 
 import csv
-import math
 from typing import Any, Dict, Generator
 
 

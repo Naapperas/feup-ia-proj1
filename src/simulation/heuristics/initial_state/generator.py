@@ -3,7 +3,7 @@ Initial State Generator
 """
 
 from models.establishment import Establishment
-from ...graph import Graph
+from simulation.graph import Graph
 
 
 class Generator:  # pylint: disable=too-few-public-methods
@@ -17,16 +17,14 @@ class Generator:  # pylint: disable=too-few-public-methods
     @staticmethod
     def next(
         establishments: dict[int, Establishment],
-        previous: Establishment,
-        graph: Graph,
+        previous: Establishment,  # pylint: disable=unused-argument
+        graph: Graph,  # pylint: disable=unused-argument
     ) -> Establishment:
         """
-        Generates a sample of establishments
-        to be used in the applications initial state.
+        Returns an establishment to be used in the applications initial state.
 
-        The return value takes the form (<sample>, <rest>).
-
-        The default implementation takes no sample and returns its parameter
+        The default implementation returns
+        the last establishment added to the argument dictionary
         """
 
         return establishments.popitem()[1]

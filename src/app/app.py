@@ -173,6 +173,10 @@ class App:
         threading.Thread(target=self.initial_state).start()
 
     def initial_state(self):
+        """
+        Thread runner to load the initial state in parallel
+        """
+
         if self.simulation is not None:
             self.simulation.state = State.initial_state(
                 self.simulation.establishments,

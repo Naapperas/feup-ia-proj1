@@ -4,7 +4,7 @@ Classes and methods related to brigades
 
 from debug import Printable
 from models.route import Route
-from simulation.network import Network
+from models.network import Network
 
 
 class Brigade(Printable):

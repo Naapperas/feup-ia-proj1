@@ -1,3 +1,5 @@
+# pylint: skip-file
+
 """
 Functions and classes related to the application
 """
@@ -8,11 +10,8 @@ import pygame
 from numpy import clip, negative
 
 from app.events import event, listener
-from models.brigade import Brigade
 from models.coords import Coords
-from models.establishment import Establishment
 from simulation import Simulation
-from simulation.state import State
 
 MIN_LAT = 41.01793
 MAX_LAT = 41.46618
@@ -58,9 +57,9 @@ class Visualization:
         )
 
         self.cache: tuple[
-            tuple[float, float],
-            list[tuple[float, float]],
-            list[list[tuple[float, float]]],
+            tuple[float, float],  # depot
+            list[tuple[float, float]],  # establishments
+            list[list[tuple[float, float]]],  # routes
         ] = ((0, 0), [], [])
 
         self.redraw_map()
@@ -68,6 +67,7 @@ class Visualization:
     def redraw_map(self):
         """
         Scales this visualization's map according to its zoom level
+        and redraws this visualization's objects
         """
 
         self.drawn_map = pygame.transform.scale_by(self.map, self.zoom)
@@ -77,6 +77,10 @@ class Visualization:
         self.redraw_establishment(self.cache[0], True)
 
     def redraw(self, simulation: Simulation):
+        """
+        Updates the visualization cache and redraws every object onto a static image
+        """
+
         self.cache = (
             self.world_to_map(simulation.network.depot.coords),
             [self.world_to_map(e.coords) for e in simulation.establishments],
@@ -113,7 +117,8 @@ class Visualization:
         Draws the given brigade's route on the given surface
         """
 
-        for start, end in pairwise(brigade):
+        # since each route is a closed loop, add the first establishment again
+        for start, end in pairwise([*brigade, brigade[0]]):
             pygame.draw.line(
                 surface,
                 (0, 0, 0),
@@ -121,6 +126,7 @@ class Visualization:
                 (end[0] * self.zoom / 2, end[1] * self.zoom / 2),
                 1,
             )
+            # TODO: draw arrow indicating the route direction
 
     def redraw_establishments(self):
         """
@@ -169,8 +175,8 @@ class Visualization:
         Converts the screen coordinates to the corresponding map pixel coordinates
         """
         return (
-            coords[0] / self.zoom + self.translation[0],
-            coords[1] / self.zoom + self.translation[1],
+            coords[0] / max([self.zoom, 1]) + self.translation[0],
+            coords[1] / max([self.zoom, 1]) + self.translation[1],
         )
 
     def map_to_screen(
@@ -180,8 +186,8 @@ class Visualization:
         Converts the map pixel coordinates to the corresponding screen coordinates
         """
         return (
-            (coords[0] - self.translation[0]) * self.zoom,
-            (coords[1] - self.translation[1]) * self.zoom,
+            (coords[0] - self.translation[0]) * max([self.zoom, 1]),
+            (coords[1] - self.translation[1]) * max([self.zoom, 1]),
         )
 
     def screen_to_world(self, coords: tuple[float, float] = (0, 0)) -> Coords:

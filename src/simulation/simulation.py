@@ -5,10 +5,10 @@ Classes and methods related to running the simulation of the problem
 
 import math
 
-from simulation.graph import Graph, parse_graph
 from models.establishment import Establishment
+from models.network import Network
 from models.parse import parse_model
-from simulation.network import Network
+from simulation.graph import Graph, parse_graph
 from simulation.state import State
 
 
