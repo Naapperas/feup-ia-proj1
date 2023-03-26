@@ -31,14 +31,14 @@
         "font": {
             "name": "Minecraftia",
             "size": "16",
-            "regular_path": "resources/font.ttf"
+            "regular_path": "resources/fonts/font.ttf"
         }
     },
     "#big": {
         "font": {
             "name": "Minecraftia",
             "size": "32",
-            "regular_path": "resources/font.ttf"
+            "regular_path": "resources/fonts/font.ttf"
         }
     },
     "button": {
@@ -49,7 +49,7 @@
         "font": {
             "name": "Minecraftia",
             "size": "16",
-            "regular_path": "resources/font.ttf"
+            "regular_path": "resources/fonts/font.ttf"
         }
     },
     "horizontal_slider": {

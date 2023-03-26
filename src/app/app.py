@@ -42,7 +42,7 @@ class App:
                 {
                     "name": "Minecraftia",
                     "point_size": 16,
-                    "regular_path": "resources/font.ttf",
+                    "regular_path": "resources/fonts/font.ttf",
                 }
             ]
         )
@@ -150,6 +150,14 @@ class App:
 
             handle_events(self)
 
+            if self.simulation is not None and len(self.simulation.state.brigades) > 0:
+                print(
+                    "Waiting time for first brigade:",
+                    self.simulation.state.brigades[0].total_waiting_time(
+                        self.simulation.network
+                    ),
+                )
+
             self.visualization.draw(self.screen)
             self.gui_manager.draw_ui(self.screen)
             pygame.display.flip()
@@ -163,7 +171,7 @@ class App:
         self.running = False
 
     @event(pygame_gui.UI_BUTTON_PRESSED, ui_object_id=f"panel.{START_SIMULATION}")
-    def on_start_simulation(self, event: pygame.event.Event):
+    def on_start_simulation(self, _event: pygame.event.Event):
         """
         Handler called when a button is pressed
         """
@@ -191,11 +199,11 @@ class App:
         pygame_gui.UI_HORIZONTAL_SLIDER_MOVED,
         ui_object_id=f"panel.{NUM_ESTABLISHMENTS}",
     )
-    def on_num_establishments(self, event: pygame.event.Event):
+    def on_num_establishments(self, _event: pygame.event.Event):
         """
         Handler called when the number of establishments is changed
         """
 
         if self.simulation is not None:
-            self.simulation.num_establishments = event.value
-        self.establishments_label.set_text(f"{event.value} establishments")
+            self.simulation.num_establishments = _event.value
+        self.establishments_label.set_text(f"{_event.value} establishments")

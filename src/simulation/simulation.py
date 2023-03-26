@@ -40,8 +40,10 @@ class Simulation:
         """
         Sets up the simulation
         """
-        establishments = parse_model("./resources/establishments.csv", Establishment)
-        graph = parse_graph("./resources/distances.csv")
+        establishments = parse_model(
+            "./resources/dataset/establishments.csv", Establishment
+        )
+        graph = parse_graph("./resources/dataset/distances.csv")
 
         depot = establishments.pop(0)
 

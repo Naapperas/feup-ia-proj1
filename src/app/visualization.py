@@ -48,12 +48,12 @@ class Visualization:
         self.zoom = 1
         self.translation = (0, 0)
 
-        self.map = pygame.image.load("resources/Porto.png").convert()
+        self.map = pygame.image.load("resources/images/Porto.png").convert()
         self.pin = pygame.transform.scale_by(
-            pygame.image.load("resources/pin.png").convert_alpha(), 2
+            pygame.image.load("resources/images/pin.png").convert_alpha(), 2
         )
         self.flag = pygame.transform.scale_by(
-            pygame.image.load("resources/flag.png").convert_alpha(), 2
+            pygame.image.load("resources/images/flag.png").convert_alpha(), 2
         )
 
         self.cache: tuple[

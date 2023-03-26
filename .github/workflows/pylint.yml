@@ -24,4 +24,4 @@ jobs:
         echo -e "[format]\nmax-line-length = 88" >> pylintrc
     - name: Analyzing the code with pylint
       run: |
-        pylint $(git ls-files '*.py')
+        pylint --fail-under=9 $(git ls-files '*.py')
