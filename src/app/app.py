@@ -109,7 +109,7 @@ class App:
             anchors={"center": "center"},
             container=self.main_menu,
             object_id=NUM_ESTABLISHMENTS,
-            click_increment=100,
+            click_increment=10,
         )
         self.establishments_label = pygame_gui.elements.UILabel(
             text="x establishments",

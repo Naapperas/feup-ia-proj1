@@ -18,7 +18,7 @@ class Brigade(Printable):
     def __init__(self, route: Route):
         self.route = route
 
-    def total_waiting_time(self, network: Network) -> int:
+    def total_waiting_time(self, network: Network) -> float:
         """
         Returns the total waiting time in seconds for this brigade
         across its route's establishments
@@ -27,7 +27,7 @@ class Brigade(Printable):
         graph = network.graph
         depot = network.depot
 
-        total_waiting_time: int = 0
+        total_waiting_time: float = 0
 
         previous_establishment = depot
         cur_time: float = Brigade.INSPECTION_START_TIME_SECONDS
@@ -40,21 +40,25 @@ class Brigade(Printable):
             cur_time += time_to_arrive  # simulate the brigade's trip
 
             opening_hours = establishment.opening_hours
-            cur_hour = int(cur_time // 3600) % 24
+            cur_hour = int(cur_time // 3600)
 
-            # use only opening hours in the future relative to us
-            future_hours = opening_hours[cur_hour:]
+            # use only opening hours in the future relative to us or that are the current one
+            valid_opening_hours = (
+                opening_hours[cur_hour % 24 :] + opening_hours[: cur_hour % 24]
+            )
 
-            try:
-                next_open_hour = future_hours.index(1) + cur_hour
-            except ValueError:
-                # if we reach this point,
-                # most likely this establishment is closed for the rest of the day
-                # return large value so the enclosing state is deemed bad
+            next_open_hour = valid_opening_hours.index(1) + cur_hour
 
-                return 999999999
+            waiting_time = (
+                0
+                if next_open_hour <= cur_hour # should not fall in the "less than" range but just to be sure
+                else (next_open_hour * 60 * 60) - cur_time
+            )
 
-            waiting_time = (next_open_hour - cur_hour) * 60 * 60
+            # print("Waiting time:", waiting_time)
+            # print("Current hour:", cur_hour * 60 * 60)
+            # print("Next open hour:", next_open_hour * 60 * 60)
+            # print("Current time:", cur_time)
 
             cur_time += waiting_time
             total_waiting_time += waiting_time

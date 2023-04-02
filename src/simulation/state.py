@@ -44,14 +44,15 @@ class State(Printable):
 
         establishments_copy = {e.establishment_id: e for e in establishments}
 
+        # TODO: see why the index param is needed
         while len(establishments_copy) > 0:
-            for brigade in brigades:
+            for i, brigade in enumerate(brigades):
                 previous = brigade[-1]
                 establishment = generator.next(
                     establishments_copy, previous, network.graph
                 )
                 establishments_copy.pop(establishment.establishment_id)
-                brigade.append(establishment)
+                brigades[i].append(establishment)
 
         return State([Brigade(Route(brigade)) for brigade in brigades])
 
