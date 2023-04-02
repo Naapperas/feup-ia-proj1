@@ -51,7 +51,8 @@ class Brigade(Printable):
 
             waiting_time = (
                 0
-                if next_open_hour <= cur_hour # should not fall in the "less than" range but just to be sure
+                if next_open_hour
+                <= cur_hour  # should not fall in the "less than" range but just to be sure
                 else (next_open_hour * 60 * 60) - cur_time
             )
 

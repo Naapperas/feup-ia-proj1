@@ -136,7 +136,7 @@ class Visualization:
         for establishment in self.cache[1]:
             self.redraw_establishment(establishment)
 
-    def redraw_establishment(self, coords: tuple[float, float], is_depot=False):
+    def redraw_establishment(self, coords: tuple[float, float], is_depot: bool = False):
         """
         Draws the given establishment on the given surface
         """

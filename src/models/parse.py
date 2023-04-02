@@ -41,7 +41,9 @@ def get_named_field(
 Model = TypeVar("Model", bound=Parsable)
 
 
-def parse_model(file: str, model: Type[Model], max_lines_parsed=-1) -> list[Model]:
+def parse_model(
+    file: str, model: Type[Model], max_lines_parsed: int = -1
+) -> list[Model]:
     """
     Parses a CSV file and returns an array of the specified model.
 
@@ -49,12 +51,10 @@ def parse_model(file: str, model: Type[Model], max_lines_parsed=-1) -> list[Mode
     a negative value indicates that all lines should be parsed.
     """
 
-    # FIXME: typechecking
-    # models: list[Model] = []
-    models = []
+    models: list[Model] = []
 
     for line in parse_file(file, max_lines_parsed):
-        model_data = dict(line.items())  # this is ugly but at least we get types
+        model_data = dict(line.items())
 
         models.append(model.parse(model_data))
     return models

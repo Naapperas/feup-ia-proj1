@@ -21,7 +21,7 @@ class EstablishmentAddress(Printable, Parsable):
     full_address: str
 
     @staticmethod
-    def parse(data):
+    def parse(data: dict[str, str]):
         district = get_named_field(data, "District", str)
         county = get_named_field(data, "County", str)
         parish = get_named_field(data, "Parish", str)
@@ -39,7 +39,7 @@ class InspectionData(Printable, Parsable):
     inspection_time: int
 
     @staticmethod
-    def parse(data):
+    def parse(data: dict[str, str]):
         inspection_utility = get_named_field(data, "Inspection Utility", float)
         inspection_time = get_named_field(data, "Inspection Time", int)
 
@@ -85,7 +85,7 @@ class Establishment(Printable, Parsable):
         return self.visited
 
     @staticmethod
-    def parse(data):
+    def parse(data: dict[str, str]):
         establishment_id = get_named_field(data, "Id", int)
         address = EstablishmentAddress.parse(data)
         coords = Coords.parse(data)

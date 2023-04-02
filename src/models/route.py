@@ -30,5 +30,7 @@ class Route(Printable, Iterable[Establishment]):
     def __getitem__(self, __s: slice) -> list[Establishment]:
         ...
 
-    def __getitem__(self, __arg):
+    def __getitem__(
+        self, __arg: slice | SupportsIndex
+    ) -> Establishment | list[Establishment]:
         return self.route_establishments[__arg]

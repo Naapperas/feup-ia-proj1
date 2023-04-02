@@ -8,7 +8,7 @@ from typing import Any, Callable
 import pygame
 
 events: defaultdict[
-    int, list[tuple[dict, Callable[[Any, pygame.event.Event], Any]]]
+    int, list[tuple[dict[str, Any], Callable[[Any, pygame.event.Event], Any]]]
 ] = defaultdict(list)
 
 listeners: defaultdict[str, list[Any]] = defaultdict(list)
@@ -23,13 +23,12 @@ def listener(var: Any):
     return var
 
 
-def event(*e: int, **kwargs):
+def event(*e: int, **kwargs: Any):
     """
     Decorator for event functions
     """
 
     def decorator(func: Callable[[Any, pygame.event.Event], Any]):
-        global events
         for _event in e:
             events[_event].append((kwargs, func))
 

@@ -29,7 +29,7 @@ class Coords(Printable, Parsable):
     EARTH_RADIUS_KM: ClassVar[int] = 6371
 
     @staticmethod
-    def parse(data):
+    def parse(data: dict[str, str]):
         lat = get_named_field(data, "Latitude", float)
         long = get_named_field(data, "Longitude", float)
 

@@ -33,14 +33,14 @@ class Simulation:
         Returns the expected amount of carriers needed to run this simulation
         """
 
-        return math.floor(0.1 * self.num_establishments)
+        return math.floor(float(0.1 * self.num_establishments))
 
     @staticmethod
     def setup() -> "Simulation":
         """
         Sets up the simulation
         """
-        establishments = parse_model(
+        establishments: list[Establishment] = parse_model(
             "./resources/dataset/establishments.csv", Establishment
         )
         graph = parse_graph("./resources/dataset/distances.csv")

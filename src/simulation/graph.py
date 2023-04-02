@@ -42,7 +42,7 @@ def parse_graph(file: str) -> Graph:
     """
     Parses an input file and returns a dense graph representing its data
     """
-    mat = []
+    mat: list[list[float]] = []
 
     for line in parse_file(file):
         line = list(line.values())[1:]
