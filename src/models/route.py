@@ -5,7 +5,8 @@ Classes and methods related to routes
 from typing import Iterable, Iterator, SupportsIndex, overload
 
 from debug import Printable
-from models.establishment import Establishment
+
+from .establishment import Establishment
 
 
 class Route(Printable, Iterable[Establishment]):
@@ -21,6 +22,9 @@ class Route(Printable, Iterable[Establishment]):
 
     def __len__(self) -> int:
         return len(self.route_establishments)
+
+    def __setitem__(self, __i: SupportsIndex, __o: Establishment) -> None:
+        self.route_establishments[__i] = __o
 
     @overload
     def __getitem__(self, __i: SupportsIndex) -> Establishment:

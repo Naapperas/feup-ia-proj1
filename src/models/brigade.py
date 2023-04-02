@@ -3,9 +3,11 @@ Classes and methods related to brigades
 """
 
 from typing import ClassVar
+
 from debug import Printable
-from models.route import Route
-from models.network import Network
+
+from .network import Network
+from .route import Route
 
 
 class Brigade(Printable):
@@ -42,7 +44,8 @@ class Brigade(Printable):
             opening_hours = establishment.opening_hours
             cur_hour = int(cur_time // 3600)
 
-            # use only opening hours in the future relative to us or that are the current one
+            # use only opening hours in the future
+            # relative to us or that are the current one
             valid_opening_hours = (
                 opening_hours[cur_hour % 24 :] + opening_hours[: cur_hour % 24]
             )
@@ -52,7 +55,8 @@ class Brigade(Printable):
             waiting_time = (
                 0
                 if next_open_hour
-                <= cur_hour  # should not fall in the "less than" range but just to be sure
+                # should not fall in the "less than" range but just to be sure
+                <= cur_hour
                 else (next_open_hour * 60 * 60) - cur_time
             )
 

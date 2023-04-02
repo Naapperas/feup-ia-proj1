@@ -22,11 +22,11 @@ class Parsable:  # pylint: disable=too-few-public-methods
 
 
 FT_co = TypeVar("FT_co", bound=Type, covariant=True)
-DicDT = TypeVar("DicDT")
+DicT = TypeVar("DicT")
 
 
 def get_named_field(
-    data: dict[str, DicDT], field_name: str, field_type: Callable[[DicDT], FT_co]
+    data: dict[str, DicT], field_name: str, field_type: Callable[[DicT], FT_co]
 ) -> FT_co:
     """
     Gets a field from the given data dict using the given name,

@@ -11,13 +11,12 @@ from simulation.state import State
 from .generator import Generator
 
 
-class CrossoverGenerator(Generator):
+class CrossoverGenerator(Generator):  # pylint: disable=too-few-public-methods
     """
     Neighborhood generator that performs a crossover on the given state.
     """
 
-    @staticmethod
-    def generate(state: State) -> State:
+    def apply(self, state: State) -> State:
         new_state = state.copy()
 
         num_brigades = len(new_state.brigades)
@@ -35,7 +34,7 @@ class CrossoverGenerator(Generator):
 
         # perform a crossover on the selected brigades
         crossover_point = random.randint(
-            0, min(len(first_brigade.route), len(second_brigade.route)) // 2
+            0, (min(len(first_brigade.route), len(second_brigade.route)) - 1) // 2
         )
 
         new_state.brigades.append(

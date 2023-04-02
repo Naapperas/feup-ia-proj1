@@ -4,15 +4,14 @@ State representation in this simulation
 
 
 from copy import deepcopy
-from typing import Type
 
 from debug import Printable
-from models import Brigade
+from models.brigade import Brigade
 from models.establishment import Establishment
 from models.network import Network
 from models.route import Route
-from simulation.heuristics.initial_state.generator import Generator
-from simulation.heuristics.initial_state.random import RandomGenerator
+from .heuristics.initial_state.generator import Generator
+from .heuristics.initial_state.random import RandomGenerator
 
 
 class State(Printable):
@@ -31,7 +30,7 @@ class State(Printable):
         establishments: list[Establishment],
         network: Network,
         num_carriers: int,
-        generator: Type[Generator] = RandomGenerator,
+        generator: Generator = RandomGenerator(),
     ) -> "State":
         """
         Generates the initial state from the given list of establishments

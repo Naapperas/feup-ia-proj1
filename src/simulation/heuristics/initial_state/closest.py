@@ -13,8 +13,8 @@ class ClosestGenerator(Generator):
     Generator that returns the closest establishment from the previous one
     """
 
-    @staticmethod
     def next(
+        self,
         establishments: dict[int, Establishment],
         previous: Establishment,
         graph: Graph,

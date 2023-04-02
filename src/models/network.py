@@ -3,7 +3,8 @@ Classes and functions related to the establishment network
 """
 
 from simulation.graph import Graph
-from models.establishment import Establishment
+
+from .establishment import Establishment
 
 
 class Network:

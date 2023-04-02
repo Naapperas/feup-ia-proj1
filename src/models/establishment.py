@@ -5,8 +5,9 @@ Logic related to an Establishment in the context of our problem
 from dataclasses import dataclass
 
 from debug import Printable
-from models.coords import Coords
-from models.parse import Parsable, get_named_field
+
+from .coords import Coords
+from .parse import Parsable, get_named_field
 
 
 @dataclass

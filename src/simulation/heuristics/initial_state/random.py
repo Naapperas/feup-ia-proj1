@@ -15,8 +15,8 @@ class RandomGenerator(Generator):  # pylint: disable=too-few-public-methods
     Generator that returns a random establishment
     """
 
-    @staticmethod
     def next(
+        self,
         establishments: dict[int, Establishment],
         previous: Establishment,  # pylint: disable=unused-argument
         graph: Graph,  # pylint: disable=unused-argument

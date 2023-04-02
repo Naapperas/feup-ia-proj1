@@ -40,7 +40,7 @@ class Simulation:
         """
         Sets up the simulation
         """
-        establishments: list[Establishment] = parse_model(
+        establishments = parse_model(
             "./resources/dataset/establishments.csv", Establishment
         )
         graph = parse_graph("./resources/dataset/distances.csv")

@@ -14,8 +14,8 @@ class Generator:  # pylint: disable=too-few-public-methods
     in the initial state of the simulation
     """
 
-    @staticmethod
     def next(
+        self,
         establishments: dict[int, Establishment],
         previous: Establishment,  # pylint: disable=unused-argument
         graph: Graph,  # pylint: disable=unused-argument

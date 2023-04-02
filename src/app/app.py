@@ -190,7 +190,7 @@ class App:
                 self.simulation.establishments,
                 self.simulation.network,
                 self.simulation.get_num_carriers(),
-                ClosestGenerator,
+                ClosestGenerator(),
             )
             self.visualization.redraw(self.simulation)
         self.loading.hide()
