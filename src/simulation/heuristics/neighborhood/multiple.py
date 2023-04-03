@@ -7,7 +7,7 @@ from simulation.state import State
 from .generator import Generator
 
 
-class MultiGenerator(Generator):  # pylint: disable=too-few-public-methods
+class MultiGenerator(Generator):
     """
     A class for generating neighboring states, applying several other in succession.
     """
@@ -22,3 +22,6 @@ class MultiGenerator(Generator):  # pylint: disable=too-few-public-methods
             new_state = generator.apply(new_state)
 
         return new_state
+
+    def name(self) -> str:
+        return "Multi Generator"

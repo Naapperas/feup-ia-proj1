@@ -9,7 +9,7 @@ from simulation.state import State
 from .generator import Generator
 
 
-class RandomGenerator(Generator):  # pylint: disable=too-few-public-methods
+class RandomGenerator(Generator):
     """
     A class for generating neighboring states,
     applying a random generator out of the given state generator.
@@ -35,3 +35,6 @@ class RandomGenerator(Generator):  # pylint: disable=too-few-public-methods
             Generator: the random generator
         """
         return random.choice(self.generators)
+
+    def name(self) -> str:
+        return "Random Generator"

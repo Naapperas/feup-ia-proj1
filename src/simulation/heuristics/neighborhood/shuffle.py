@@ -11,9 +11,9 @@ from simulation.state import State
 from .generator import Generator
 
 
-class ShuffleGenerator(Generator):  # pylint: disable=too-few-public-methods
+class ShuffleGenerator(Generator):
     """
-    Performs a shuffle on a given state, changing a single route
+    Performs a shuffle on a given state, changing every route
     """
 
     def apply(self, state: State) -> State:
@@ -32,3 +32,6 @@ class ShuffleGenerator(Generator):  # pylint: disable=too-few-public-methods
         new_state.brigades.append(Brigade(Route(route_establishments)))
 
         return new_state
+
+    def name(self) -> str:
+        return "Shuffle"

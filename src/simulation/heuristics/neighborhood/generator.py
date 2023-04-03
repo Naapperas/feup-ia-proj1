@@ -5,7 +5,7 @@ Classes and methods related to generating neighboring states
 from simulation.state import State
 
 
-class Generator:  # pylint: disable=too-few-public-methods
+class Generator:
     """
     A class for generating neighboring states given a specific one.
     """
@@ -22,3 +22,16 @@ class Generator:  # pylint: disable=too-few-public-methods
             State:  new state, which should be a "neighbor" of the old one
         """
         return state.copy()
+
+    def name(self) -> str:
+        """
+        Returns the name of the generator.
+        """
+
+        return "Generator"
+
+    def __repr__(self) -> str:
+        return self.name()
+
+    def __str__(self) -> str:
+        return self.name()

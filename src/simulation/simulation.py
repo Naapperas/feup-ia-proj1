@@ -4,16 +4,30 @@ Classes and methods related to running the simulation of the problem
 
 
 import math
+from dataclasses import dataclass
+from time import perf_counter
 from typing import Callable, Generator
 
 from models.establishment import Establishment
 from models.network import Network
 from models.parse import parse_model
-from simulation.graph import Graph, parse_graph
-from simulation.heuristics.meta.metaheuristic import Metaheuristic
-from simulation.heuristics.meta.simulated_anealling import SimulatedAnnealing
-from simulation.heuristics.neighborhood.first_best import FirstBestGenerator
-from simulation.state import State
+from simulation.heuristics.neighborhood.crossover import CrossoverGenerator
+from simulation.heuristics.neighborhood.mutation import MutationGenerator
+from simulation.heuristics.neighborhood.random import RandomGenerator
+
+from .graph import Graph, parse_graph
+from .heuristics.meta.metaheuristic import Metaheuristic
+from .heuristics.meta.simulated_annealing import SimulatedAnnealing
+from .state import State
+
+
+@dataclass
+class Statistics:
+    runtime: float
+    best_solution_runtime: float
+
+    total_iterations: int
+    best_solution_iterations: int
 
 
 class Simulation:
@@ -36,14 +50,17 @@ class Simulation:
             establishments (list[Establishment]): the list of establishments to use
             heuristic (Metaheuristic, optional): The metaheuristic to use when optimizing the problem's solution. Defaults to None.
         """
+        self.stats = Statistics(0, 0, 0, 0)
         self.state = State([])
         self.network = Network(depot, graph, establishments)
         self.num_establishments = len(establishments)
 
         if heuristic is None:
-            default_neighbor_generator = FirstBestGenerator(
-                self.network,
-                [],
+            default_neighbor_generator = RandomGenerator(
+                [
+                    MutationGenerator(),
+                    CrossoverGenerator(),
+                ]
             )
             default_fitness_function: Callable[[State], float] = lambda s: -s.value(
                 self.network
@@ -71,9 +88,20 @@ class Simulation:
         Yields:
             State: The state of the simulation at each iteration
         """
+
+        start = perf_counter()
+        optimal_start = start
+
+        optimal_end = optimal_start
+
         for new_state in self.heuristic.optimize(self.state):
+            optimal_end = perf_counter()
             self.state = new_state
             yield self.state
+
+        end = perf_counter()
+
+        self.stats.runtime = end - start
 
     @staticmethod
     def setup() -> "Simulation":

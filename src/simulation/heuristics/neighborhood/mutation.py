@@ -10,7 +10,7 @@ from simulation.state import State
 from .generator import Generator
 
 
-class MutationGenerator(Generator):  # pylint: disable=too-few-public-methods
+class MutationGenerator(Generator):
     """
     Performs a mutation on a given state, changing a single route
     """
@@ -34,3 +34,6 @@ class MutationGenerator(Generator):  # pylint: disable=too-few-public-methods
         new_state.brigades.append(Brigade(old_route))
 
         return new_state
+
+    def name(self) -> str:
+        return "Mutation"

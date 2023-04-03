@@ -7,7 +7,7 @@ from simulation.graph import Graph
 from .establishment import Establishment
 
 
-class Network:
+class Network:  # pylint: disable=too-few-public-methods
     """
     The establishment network
     """

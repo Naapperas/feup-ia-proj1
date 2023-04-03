@@ -11,7 +11,7 @@ from simulation.state import State
 from .generator import Generator
 
 
-class CrossoverGenerator(Generator):  # pylint: disable=too-few-public-methods
+class CrossoverGenerator(Generator):
     """
     Neighborhood generator that performs a crossover on the given state.
     """
@@ -60,3 +60,6 @@ class CrossoverGenerator(Generator):  # pylint: disable=too-few-public-methods
         )
 
         return new_state
+
+    def name(self) -> str:
+        return "Crossover"

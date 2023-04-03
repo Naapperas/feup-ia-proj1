@@ -11,9 +11,10 @@ from .crossover import CrossoverGenerator
 from .generator import Generator
 from .mutation import MutationGenerator
 from .random import RandomGenerator
+from .shuffle import ShuffleGenerator
 
 
-class FirstBestGenerator(Generator):  # pylint: disable=too-few-public-methods
+class FirstBestGenerator(Generator):
     """
     Calculates the first neighbor that is better than the given one
     """
@@ -24,15 +25,15 @@ class FirstBestGenerator(Generator):  # pylint: disable=too-few-public-methods
         generators: list[Generator],
     ):
         if generators == []:
-            generators = [CrossoverGenerator(), MutationGenerator()]
+            generators = [CrossoverGenerator(), MutationGenerator(), ShuffleGenerator()]
 
         self.generator = RandomGenerator(generators)
         self.network = network
 
     def apply(self, state: State) -> State:
-        generator = self.generator.random_generator()
-
         while True:
+            generator = self.generator.random_generator()
+
             new_state = generator.apply(state)
 
             # should change to abstract fitness function, perhaps
@@ -41,3 +42,6 @@ class FirstBestGenerator(Generator):  # pylint: disable=too-few-public-methods
 
         # FALLBACK, should never happen
         return state.copy()
+
+    def name(self) -> str:
+        return "First Best"
