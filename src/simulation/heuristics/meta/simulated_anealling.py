@@ -50,6 +50,9 @@ class SimulatedAnnealing(Metaheuristic):
         Returns:
             State: the final state that was reached by the simulated annealing algorithm
         """
+
+        prev_deltas = []
+        
         current_state = initial_state
         current_fitness = self.fitness_func(current_state)
         temperature = self.initial_temperature
@@ -64,6 +67,13 @@ class SimulatedAnnealing(Metaheuristic):
                 current_fitness = neighbor_fitness
             else:
                 delta = neighbor_fitness - current_fitness
+                prev_deltas.append(delta)
+                if len(prev_deltas) > 5:
+                    prev_deltas.pop(0)
+                    
+                if all(val == 1 for val in prev_deltas) or len(set(prev_deltas)) == 1:
+                    break
+                
                 probability = math.exp(-delta / temperature)
 
                 if random.random() < probability:

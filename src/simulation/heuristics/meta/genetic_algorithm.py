@@ -1,6 +1,5 @@
 from typing import Callable
 from simulation import State
-from generator import NeighborGenerator as NeighborGenerator
 from metaheuristic import Metaheuristic
 import random
 from typing import Callable, Generator
