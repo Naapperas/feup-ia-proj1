@@ -13,7 +13,7 @@ from .mutation import MutationGenerator
 from .random import RandomGenerator
 
 
-class FirstBestGenerator(Generator):  # pylint: disable=too-few-public-methods
+class BestAfterGenerator(Generator):  # pylint: disable=too-few-public-methods
     """
     Calculates the best neighbor found after a set number of iterations
     """

@@ -12,6 +12,9 @@ class Network:
     The establishment network
     """
 
-    def __init__(self, depot: Establishment, graph: Graph):
+    def __init__(
+        self, depot: Establishment, graph: Graph, establishments: list[Establishment]
+    ):
         self.depot = depot
         self.graph = graph
+        self.establishments = establishments
