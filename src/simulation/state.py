@@ -7,7 +7,6 @@ from copy import deepcopy
 
 from debug import Printable
 from models.brigade import Brigade
-from models.establishment import Establishment
 from models.network import Network
 from models.route import Route
 from .heuristics.initial_state.generator import Generator
@@ -24,10 +23,10 @@ class State(Printable):
         brigades: list[Brigade],
     ):
         self.brigades = brigades
+        self.cached_value = 0
 
     @staticmethod
     def initial_state(
-        establishments: list[Establishment],
         network: Network,
         num_carriers: int,
         generator: Generator = RandomGenerator(),
@@ -39,19 +38,24 @@ class State(Printable):
         By default it uses a random generator to generate the initial state
         """
 
+        establishments = network.establishments
+
         brigades = [[network.depot] for _ in range(num_carriers)]
 
         establishments_copy = {e.establishment_id: e for e in establishments}
 
-        # TODO: see why the index param is needed
         while len(establishments_copy) > 0:
-            for i, brigade in enumerate(brigades):
+            for brigade in brigades:
+                # in case we exhaust every establishment
+                if len(establishments_copy) == 0:
+                    break
+
                 previous = brigade[-1]
                 establishment = generator.next(
                     establishments_copy, previous, network.graph
                 )
                 establishments_copy.pop(establishment.establishment_id)
-                brigades[i].append(establishment)
+                brigade.append(establishment)
 
         return State([Brigade(Route(brigade)) for brigade in brigades])
 
@@ -63,7 +67,10 @@ class State(Printable):
         which tells how the different routes are connected
         """
 
-        return sum(map(lambda b: b.total_waiting_time(network), self.brigades), 0)
+        self.cached_value = sum(
+            map(lambda b: b.total_waiting_time(network), self.brigades), 0
+        )
+        return self.cached_value
 
     def copy(self):
         """

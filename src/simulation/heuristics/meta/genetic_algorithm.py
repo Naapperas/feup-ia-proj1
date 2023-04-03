@@ -1,8 +1,10 @@
-from typing import Callable
-from simulation import State
-from generator import NeighborGenerator as NeighborGenerator
-from metaheuristic import Metaheuristic
 import random
+from typing import Callable, Generator
+
+from metaheuristic import Metaheuristic
+
+from simulation import State
+from simulation.heuristics.neighborhood.generator import Generator as NeighborGenerator
 
 
 class GeneticAlgorithm(Metaheuristic):
@@ -17,8 +19,14 @@ class GeneticAlgorithm(Metaheuristic):
         mutation_rate (float): the probability that a single gene will mutate
     """
 
-    def __init__(self, generator: NeighborGenerator, fitness_func: Callable[[State], float], population_size: int,
-                 crossover_rate: float, mutation_rate: float):
+    def __init__(
+        self,
+        generator: NeighborGenerator,
+        fitness_func: Callable[[State], float],
+        population_size: int,
+        crossover_rate: float,
+        mutation_rate: float,
+    ):
         """
         Initializes the genetic algorithm.
 
@@ -34,7 +42,7 @@ class GeneticAlgorithm(Metaheuristic):
         self.crossover_rate = crossover_rate
         self.mutation_rate = mutation_rate
 
-    def optimize(self, initial_state: State) -> State:
+    def optimize(self, initial_state: State) -> Generator[State, None, State]:
         """
         Runs the genetic algorithm to optimize the specified initial state.
 
@@ -46,8 +54,12 @@ class GeneticAlgorithm(Metaheuristic):
 
         # Run iterations until termination condition is met
         while True:
+            yield max(population, key=self.fitness_func)
+
             # Evaluate fitness of all individuals
-            fitness_scores = [self.fitness_func(individual) for individual in population]
+            fitness_scores = [
+                self.fitness_func(individual) for individual in population
+            ]
 
             # Check if termination condition is met
             if self.is_termination_condition_met(population, fitness_scores):
@@ -70,9 +82,10 @@ class GeneticAlgorithm(Metaheuristic):
 
         return max(population, key=self.fitness_func)
 
-
-    #TODO: Change the termination condition
-    def is_termination_condition_met(self, population: list, fitness_scores: list) -> bool:
+    # TODO: Change the termination condition
+    def is_termination_condition_met(
+        self, population: list[State], fitness_scores: list[float]
+    ) -> bool:
         """
         Checks if the termination condition is met for the genetic algorithm.
 
@@ -88,7 +101,9 @@ class GeneticAlgorithm(Metaheuristic):
         """
         return max(fitness_scores) == 1.0
 
-    def select_parents(self, population: list, fitness_scores: list) -> list:
+    def select_parents(
+        self, population: list[State], fitness_scores: list[float]
+    ) -> list[State]:
         """
         Selects parents for reproduction in the genetic algorithm.
 
@@ -101,8 +116,8 @@ class GeneticAlgorithm(Metaheuristic):
         Returns:
             list: the selected parents
         """
-        parents = []
-        for i in range(len(population)):
+        parents: list[State] = []
+        for _ in range(len(population)):
             tournament = random.sample(range(len(population)), 2)
             if fitness_scores[tournament[0]] > fitness_scores[tournament[1]]:
                 parents.append(population[tournament[0]])
@@ -111,7 +126,7 @@ class GeneticAlgorithm(Metaheuristic):
 
         return parents
 
-    def breed(self, parents: list) -> list:
+    def breed(self, parents: list[State]) -> list[State]:
         """
         Breeds new individuals from parents in the genetic algorithm.
 
@@ -123,8 +138,8 @@ class GeneticAlgorithm(Metaheuristic):
         Returns:
             list: the offspring
         """
-        offspring = []
-        for i in range(self.population_size):
+        offspring: list[State] = []
+        for _ in range(self.population_size):
             parent1 = random.choice(parents)
             parent2 = random.choice(parents)
             if random.random() < self.crossover_rate:
@@ -158,7 +173,7 @@ class GeneticAlgorithm(Metaheuristic):
             mutated_offspring.append(individual)
         return mutated_offspring
 
-    def keep_best_individuals(self, population: list) -> list:
+    def keep_best_individuals(self, population: list[State]) -> list[State]:
         """
         Keeps the best individuals in the population.
 
@@ -171,5 +186,7 @@ class GeneticAlgorithm(Metaheuristic):
             list: the best individuals
         """
         fitness_scores = [self.fitness_func(individual) for individual in population]
-        sorted_population = [x for _, x in sorted(zip(fitness_scores, population), reverse=True)]
-        return sorted_population[:self.population_size]
+        sorted_population = [
+            x for _, x in sorted(zip(fitness_scores, population), reverse=True)
+        ]
+        return sorted_population[: self.population_size]

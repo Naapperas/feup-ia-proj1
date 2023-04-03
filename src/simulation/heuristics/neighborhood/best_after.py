@@ -1,6 +1,6 @@
 """
 Classes and functions related to calculating 
-the best neighbour after a set ammount of iterations
+the best neighbor after a set amount of iterations
 """
 
 

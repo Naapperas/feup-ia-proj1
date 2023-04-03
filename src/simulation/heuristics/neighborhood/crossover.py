@@ -30,6 +30,11 @@ class CrossoverGenerator(Generator):  # pylint: disable=too-few-public-methods
 
         # remove the old brigades from the previous state
         new_state.brigades = new_state.brigades[:i] + new_state.brigades[i + 1 :]
+
+        # need to account for the element being removed from the list
+        if i < j:
+            j -= 1
+
         new_state.brigades = new_state.brigades[:j] + new_state.brigades[j + 1 :]
 
         # perform a crossover on the selected brigades

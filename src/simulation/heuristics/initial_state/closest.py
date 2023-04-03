@@ -19,7 +19,6 @@ class ClosestGenerator(Generator):
         previous: Establishment,
         graph: Graph,
     ) -> Establishment:
-        # FIXME: sometimes this breaks
         closest, _ = min(
             (
                 (i, d)

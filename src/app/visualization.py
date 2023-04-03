@@ -83,7 +83,7 @@ class Visualization:
 
         self.cache = (
             self.world_to_map(simulation.network.depot.coords),
-            [self.world_to_map(e.coords) for e in simulation.establishments],
+            [self.world_to_map(e.coords) for e in simulation.network.establishments],
             [
                 [self.world_to_map(e.coords) for e in b.route.route_establishments]
                 for b in simulation.state.brigades

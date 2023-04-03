@@ -20,8 +20,13 @@ def parse_file(
     if max_lines_read == 0:
         return
 
+    lines_read = 0
     with open(file_path, mode="r", encoding="utf-8") as file:
         reader = csv.DictReader(file, delimiter=",")
 
         for line in reader:
             yield line
+            lines_read += 1
+
+            if lines_read == max_lines_read:
+                break

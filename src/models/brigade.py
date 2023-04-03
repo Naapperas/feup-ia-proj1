@@ -60,11 +60,6 @@ class Brigade(Printable):
                 else (next_open_hour * 60 * 60) - cur_time
             )
 
-            # print("Waiting time:", waiting_time)
-            # print("Current hour:", cur_hour * 60 * 60)
-            # print("Next open hour:", next_open_hour * 60 * 60)
-            # print("Current time:", cur_time)
-
             cur_time += waiting_time
             total_waiting_time += waiting_time
 

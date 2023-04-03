@@ -1,6 +1,6 @@
-from typing import Callable
+from typing import Callable, Generator
 from simulation import State
-from simulation.heuristics.neighborhood.generator import Generator
+from simulation.heuristics.neighborhood.generator import Generator as NeighborGenerator
 
 
 class Metaheuristic:
@@ -12,7 +12,9 @@ class Metaheuristic:
         fitness_func (Callable[[State], float]): the fitness function
     """
 
-    def __init__(self, generator: Generator, fitness_func: Callable[[State], float]):
+    def __init__(
+        self, generator: NeighborGenerator, fitness_func: Callable[[State], float]
+    ):
         """
         Initializes the metaheuristic.
 
@@ -23,7 +25,7 @@ class Metaheuristic:
         self.generator = generator
         self.fitness_func = fitness_func
 
-    def optimize(self, initial_state: State) -> State:
+    def optimize(self, initial_state: State) -> Generator[State, None, State]:
         """
         Runs the metaheuristic to optimize the specified initial state.
 
@@ -32,9 +34,12 @@ class Metaheuristic:
         """
         current_state = initial_state
         while True:
+            yield current_state
             new_state = self.generator.apply(current_state)
+
             if self.fitness_func(new_state) > self.fitness_func(current_state):
                 current_state = new_state
             else:
                 break
+
         return current_state

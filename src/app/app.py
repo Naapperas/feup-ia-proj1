@@ -103,8 +103,8 @@ class App:
         )
         self.establishments_slider = pygame_gui.elements.UIHorizontalSlider(
             relative_rect=pygame.Rect(0, 480, 992, 32),
-            start_value=0,
-            value_range=(0, 100),
+            start_value=65,
+            value_range=(30, 100),
             manager=self.gui_manager,
             anchors={"center": "center"},
             container=self.main_menu,
@@ -131,11 +131,13 @@ class App:
         self.main_menu.show()
         self.establishments_slider.value_range = (
             0,
-            len(self.simulation.establishments),
+            len(self.simulation.network.establishments),
         )
-        self.establishments_slider.set_current_value(self.simulation.num_establishments)
+        self.establishments_slider.set_current_value(
+            len(self.simulation.network.establishments)
+        )
         self.establishments_label.set_text(
-            f"{self.simulation.num_establishments} establishments"
+            f"{len(self.simulation.network.establishments)} establishments"
         )
 
     def loop(self):
@@ -146,17 +148,9 @@ class App:
             self.delta_t = self.clock.tick() / 1000.0
             self.gui_manager.update(self.delta_t)
 
-            print(f"{self.clock.get_fps():.2f} FPS      ", end="\r")
+            # print(f"{self.clock.get_fps():.2f} FPS      ", end="\r")
 
             handle_events(self)
-
-            if self.simulation is not None and len(self.simulation.state.brigades) > 0:
-                print(
-                    "Waiting time for first brigade:",
-                    self.simulation.state.brigades[0].total_waiting_time(
-                        self.simulation.network
-                    ),
-                )
 
             self.visualization.draw(self.screen)
             self.gui_manager.draw_ui(self.screen)
@@ -178,7 +172,26 @@ class App:
 
         self.main_menu.hide()
         self.loading.show()
-        threading.Thread(target=self.initial_state).start()
+        threading.Thread(target=self.run_simulation, daemon=True).start()
+
+    def run_simulation(self):
+        """
+        Thread runner to run the simulation in parallel
+        """
+
+        initial_state_thread = threading.Thread(target=self.initial_state)
+        initial_state_thread.start()
+        initial_state_thread.join()
+
+        assert self.simulation is not None, "Simulation is not set up"
+
+        print("Running simulation...")
+
+        for new_state in self.simulation.run():
+            print("Got new state with value: ", new_state.cached_value)
+            self.visualization.redraw(self.simulation)
+
+        print("Finished running simulation")
 
     def initial_state(self):
         """
@@ -186,8 +199,8 @@ class App:
         """
 
         if self.simulation is not None:
+            print("Loading initial state...")
             self.simulation.state = State.initial_state(
-                self.simulation.establishments,
                 self.simulation.network,
                 self.simulation.get_num_carriers(),
                 ClosestGenerator(),

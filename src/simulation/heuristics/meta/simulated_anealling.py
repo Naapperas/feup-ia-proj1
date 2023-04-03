@@ -55,6 +55,7 @@ class SimulatedAnnealing(Metaheuristic):
         temperature = self.initial_temperature
 
         while temperature > self.limit_temp:
+            yield current_state
             neighbor = self.generator.apply(current_state)
             neighbor_fitness = self.fitness_func(neighbor)
 
@@ -68,8 +69,6 @@ class SimulatedAnnealing(Metaheuristic):
                 if random.random() < probability:
                     current_state = neighbor
                     current_fitness = neighbor_fitness
-
-            yield current_state
 
             temperature *= self.cooling_factor
 
