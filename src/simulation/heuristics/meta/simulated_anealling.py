@@ -71,7 +71,7 @@ class SimulatedAnnealing(Metaheuristic):
                 if len(prev_deltas) > 5:
                     prev_deltas.pop(0)
                     
-                if all(val == 1 for val in prev_deltas) or len(set(prev_deltas)) == 1:
+                if all(val == 0 for val in prev_deltas) or len(set(prev_deltas)) == 1:
                     break
                 
                 probability = math.exp(-delta / temperature)
