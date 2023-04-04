@@ -83,6 +83,8 @@ class App:
         Sets up the UI
         """
 
+        # TODO: perhaps this could be done differently
+
         pygame_gui.elements.UILabel(
             text=Config.get("DISPLAY_TITLE"),
             relative_rect=pygame.Rect(0, -480, 1024, 64),
