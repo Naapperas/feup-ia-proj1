@@ -143,7 +143,7 @@ class App:
         )
 
         self.statistics = pygame_gui.elements.UIPanel(
-            relative_rect=pygame.Rect(0, 0, 400, 400),
+            relative_rect=pygame.Rect(0, 0, 500, 500),
             manager=self.gui_manager,
             anchors={"center": "center"},
             object_id=STATISTICS_PANEL,
@@ -205,6 +205,34 @@ class App:
             anchors={"centerx": "centerx"},
             container=self.statistics,
         )
+        pygame_gui.elements.UILabel(
+            text="Total Travel Time(/s):",
+            relative_rect=pygame.Rect(0, 320, 1024, 32),
+            manager=self.gui_manager,
+            anchors={"centerx": "centerx"},
+            container=self.statistics,
+        )
+        self.travel_time = pygame_gui.elements.UILabel(
+            text="x",
+            relative_rect=pygame.Rect(0, 345, 1024, 32),
+            manager=self.gui_manager,
+            anchors={"centerx": "centerx"},
+            container=self.statistics,
+        )
+        pygame_gui.elements.UILabel(
+            text="Total Utility:",
+            relative_rect=pygame.Rect(0, 385, 1024, 32),
+            manager=self.gui_manager,
+            anchors={"centerx": "centerx"},
+            container=self.statistics,
+        )
+        self.total_utility = pygame_gui.elements.UILabel(
+            text="Total utility: x",
+            relative_rect=pygame.Rect(0, 410, 1024, 32),
+            manager=self.gui_manager,
+            anchors={"centerx": "centerx"},
+            container=self.statistics,
+        )
 
         self.main_menu.hide()
         self.statistics.hide()
@@ -228,6 +256,7 @@ class App:
                 [
                     CrossoverGenerator(),
                     MutationGenerator(),
+                    ShuffleGenerator(),
                 ],
                 randomize=True,
             ),
@@ -235,6 +264,7 @@ class App:
                 [
                     CrossoverGenerator(),
                     MutationGenerator(),
+                    ShuffleGenerator(),
                 ]
             ),
             "shuffle": ShuffleGenerator(),
@@ -350,6 +380,12 @@ class App:
         self.final_value.set_text(f"{stats.values[-1]:.2f}")
         self.improvement.set_text(
             f"Improvement: {(((stats.values[0] - stats.values[-1]) / stats.values[0]) * 100):.2f}%"
+        )
+        self.travel_time.set_text(
+            f"{sum([b.total_travel_time for b in stats.best_solution.brigades]):.2f}"
+        )
+        self.total_utility.set_text(
+            f"{sum([b.utility for b in stats.best_solution.brigades]):.2f}"
         )
         self.statistics.show()
 

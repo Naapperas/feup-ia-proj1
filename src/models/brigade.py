@@ -19,6 +19,8 @@ class Brigade(Printable):
 
     def __init__(self, route: Route):
         self.route = route
+        self.utility: float = 0.0
+        self.total_travel_time: float = 0
 
     def total_waiting_time(self, network: Network) -> float:
         """
@@ -64,6 +66,9 @@ class Brigade(Printable):
             total_waiting_time += waiting_time
 
             cur_time += establishment.inspection_data.inspection_time * 60
+            self.utility += establishment.inspection_data.inspection_utility
             previous_establishment = establishment
+
+        self.total_travel_time = cur_time - Brigade.INSPECTION_START_TIME_SECONDS
 
         return total_waiting_time

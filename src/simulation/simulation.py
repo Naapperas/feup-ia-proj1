@@ -10,18 +10,14 @@ from typing import Callable, Generator, Optional
 
 from config import Config
 from models.establishment import Establishment
-from models.network import Network
 from models.parse import parse_model
-from simulation.heuristics.initial_state.closest import ClosestGenerator
-from simulation.heuristics.initial_state.generator import (
-    Generator as InitialStateGenerator,
-)
 from simulation.heuristics.neighborhood.crossover import CrossoverGenerator
 from simulation.heuristics.neighborhood.generator import (
     Generator as NeighborhoodGenerator,
 )
 from simulation.heuristics.neighborhood.mutation import MutationGenerator
 from simulation.heuristics.neighborhood.random import RandomGenerator
+from simulation.heuristics.neighborhood.shuffle import ShuffleGenerator
 
 from .graph import Graph, parse_graph
 from .heuristics.meta.metaheuristic import Metaheuristic
@@ -46,6 +42,7 @@ class SimulationConfig:
                 [
                     MutationGenerator(),
                     CrossoverGenerator(),
+                    ShuffleGenerator(),
                 ],
                 randomize=True,
             )
@@ -71,12 +68,14 @@ class SimulationStatistics:  # pylint: disable=too-many-instance-attributes
     """
 
     runtime: float = -1.0
-    best_solution_runtime: float = -1.0
+    # best_solution_runtime: float = -1.0
 
     total_iterations: int = -1
-    best_solution_iterations: int = -1
+    # best_solution_iterations: int = -1
 
     values: list[float] = field(default_factory=list[float])
+
+    best_solution: State
 
     metaheuristic_name: str = ""
     initial_state_generator_name: str = ""
@@ -142,6 +141,7 @@ class Simulation:
         self.stats.values = values
         self.stats.runtime = end - start
         self.stats.total_iterations = iterations
+        self.stats.best_solution = self.state
 
     @staticmethod
     def setup(simulation_config: SimulationConfig) -> "Simulation":
