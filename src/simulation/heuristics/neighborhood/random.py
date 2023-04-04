@@ -15,14 +15,20 @@ class RandomGenerator(Generator):
     applying a random generator out of the given state generator.
     """
 
-    def __init__(self, generators: list[Generator]):
+    def __init__(self, generators: list[Generator], randomize: bool = False):
         assert len(generators) > 0, "No generators provided"
 
+        self.randomize = randomize
         self.generators = generators
         self.generator = self.random_generator()
 
     def apply(self, state: State) -> State:
-        return self.generator.apply(state)
+        new_state = self.generator.apply(state)
+
+        if self.randomize:
+            self.generator = self.random_generator()
+
+        return new_state
 
     def random_generator(self) -> Generator:
         """Returns a random generator from the list of generators

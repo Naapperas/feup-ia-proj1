@@ -148,15 +148,36 @@ class App:
             container=self.statistics,
         )
         pygame_gui.elements.UILabel(
-            text="Best calculated waiting time(s):",
+            text="Initial waiting time(/s):",
             relative_rect=pygame.Rect(0, 150, 1024, 32),
+            manager=self.gui_manager,
+            anchors={"centerx": "centerx"},
+            container=self.statistics,
+        )
+        self.initial_value = pygame_gui.elements.UILabel(
+            text="x",
+            relative_rect=pygame.Rect(0, 175, 1024, 32),
+            manager=self.gui_manager,
+            anchors={"centerx": "centerx"},
+            container=self.statistics,
+        )
+        pygame_gui.elements.UILabel(
+            text="Best calculated waiting time(/s):",
+            relative_rect=pygame.Rect(0, 215, 1024, 32),
             manager=self.gui_manager,
             anchors={"centerx": "centerx"},
             container=self.statistics,
         )
         self.final_value = pygame_gui.elements.UILabel(
             text="x",
-            relative_rect=pygame.Rect(0, 175, 1024, 32),
+            relative_rect=pygame.Rect(0, 240, 1024, 32),
+            manager=self.gui_manager,
+            anchors={"centerx": "centerx"},
+            container=self.statistics,
+        )
+        self.improvement = pygame_gui.elements.UILabel(
+            text="Improvement: x%",
+            relative_rect=pygame.Rect(0, 280, 1024, 32),
             manager=self.gui_manager,
             anchors={"centerx": "centerx"},
             container=self.statistics,
@@ -253,8 +274,12 @@ class App:
         self.total_iterations_label.set_text(
             f"Total iterations: {stats.total_iterations}"
         )
-        self.total_runtime.set_text(f"Total runtime(s): {stats.runtime:.2f}")
-        self.final_value.set_text(f"{stats.final_value:.2f}")
+        self.total_runtime.set_text(f"Total runtime(/s): {stats.runtime:.2f}")
+        self.initial_value.set_text(f"{stats.values[0]:.2f}")
+        self.final_value.set_text(f"{stats.values[-1]:.2f}")
+        self.improvement.set_text(
+            f"Improvement: {(((stats.values[0] - stats.values[-1]) / stats.values[0]) * 100):.2f}%"
+        )
         self.statistics.show()
 
     def initial_state(self):
@@ -267,7 +292,7 @@ class App:
             self.simulation.state = State.initial_state(
                 self.simulation.network,
                 self.simulation.get_num_carriers(),
-                ClosestGenerator(),
+                # ClosestGenerator(),
             )
             self.visualization.redraw(self.simulation)
         self.loading.hide()

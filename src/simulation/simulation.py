@@ -11,7 +11,9 @@ from typing import Callable, Generator
 from models.establishment import Establishment
 from models.network import Network
 from models.parse import parse_model
-from simulation.heuristics.neighborhood.first_best import FirstBestGenerator
+from simulation.heuristics.neighborhood.crossover import CrossoverGenerator
+from simulation.heuristics.neighborhood.mutation import MutationGenerator
+from simulation.heuristics.neighborhood.random import RandomGenerator
 
 from .graph import Graph, parse_graph
 from .heuristics.meta.metaheuristic import Metaheuristic
@@ -32,7 +34,6 @@ class SimulationStatistics:  # pylint: disable=too-many-instance-attributes
     best_solution_iterations: int = -1
 
     values: list[float] = field(default_factory=list[float])
-    final_value: float = -1.0
 
     metaheuristic_name: str = ""
     initial_state_generator_name: str = ""
@@ -64,7 +65,13 @@ class Simulation:
         self.num_establishments = len(establishments)
 
         if heuristic is None:
-            default_neighbor_generator = FirstBestGenerator(self.network, [])
+            default_neighbor_generator = RandomGenerator(
+                [
+                    MutationGenerator(),
+                    CrossoverGenerator(),
+                ],
+                True,
+            )
             default_fitness_function: Callable[[State], float] = lambda s: -s.value(
                 self.network
             )
@@ -72,8 +79,8 @@ class Simulation:
             self.heuristic = SimulatedAnnealing(
                 default_neighbor_generator,
                 default_fitness_function,
-                cooling_factor=0.999,
-                limit_temp=1e-8,
+                cooling_factor=0.99,
+                limit_temp=1e-3,
             )
         else:
             self.heuristic = heuristic
@@ -99,7 +106,7 @@ class Simulation:
 
         for new_state in self.heuristic.optimize(self.state):
             self.state = new_state
-            values.append(self.state.value(self.network))
+            values.append(self.state.cached_value)
 
             yield self.state
 
@@ -107,7 +114,6 @@ class Simulation:
 
         end = perf_counter()
 
-        self.stats.final_value = self.state.cached_value
         self.stats.values = values
         self.stats.runtime = end - start
         self.stats.total_iterations = iterations

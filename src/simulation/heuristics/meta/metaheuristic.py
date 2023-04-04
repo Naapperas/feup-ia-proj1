@@ -29,6 +29,8 @@ class Metaheuristic:
         """
         Runs the metaheuristic to optimize the specified initial state.
 
+        The default implementation of this method is a simple hill climbing algorithm.
+
         Returns:
             State: the final state that was reached by the metaheuristic
         """
