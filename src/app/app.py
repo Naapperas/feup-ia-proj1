@@ -11,7 +11,7 @@ import threading
 from pygame import constants
 from config import Config
 
-from simulation import Simulation
+from simulation import Simulation, SimulationStatistics
 from simulation.state import State
 from simulation.heuristics.initial_state.closest import ClosestGenerator
 
@@ -99,7 +99,7 @@ class App:
             manager=self.gui_manager,
             anchors={"center": "center"},
             container=self.main_menu,
-            object_id=QUIT,
+            object_id=MAIN_MENU_QUIT,
         )
         self.establishments_slider = pygame_gui.elements.UIHorizontalSlider(
             relative_rect=pygame.Rect(0, 480, 992, 32),
@@ -118,7 +118,52 @@ class App:
             anchors={"center": "center"},
             container=self.main_menu,
         )
+
+        self.statistics = pygame_gui.elements.UIPanel(
+            relative_rect=pygame.Rect(0, 0, 400, 400),
+            manager=self.gui_manager,
+            anchors={"center": "center"},
+            object_id=STATISTICS_PANEL,
+        )
+        pygame_gui.elements.UILabel(
+            text="Statistics",
+            relative_rect=pygame.Rect(0, 0, 224, 45),
+            manager=self.gui_manager,
+            anchors={"top": "top", "centerx": "centerx"},
+            container=self.statistics,
+            object_id="#big",
+        )
+        self.total_iterations_label = pygame_gui.elements.UILabel(
+            text="Total iterations: x",
+            relative_rect=pygame.Rect(0, 70, 224, 32),
+            manager=self.gui_manager,
+            anchors={"centerx": "centerx"},
+            container=self.statistics,
+        )
+        self.total_runtime = pygame_gui.elements.UILabel(
+            text="Total runtime(s): x",
+            relative_rect=pygame.Rect(0, 110, 1024, 32),
+            manager=self.gui_manager,
+            anchors={"centerx": "centerx"},
+            container=self.statistics,
+        )
+        pygame_gui.elements.UILabel(
+            text="Best calculated waiting time(s):",
+            relative_rect=pygame.Rect(0, 150, 1024, 32),
+            manager=self.gui_manager,
+            anchors={"centerx": "centerx"},
+            container=self.statistics,
+        )
+        self.final_value = pygame_gui.elements.UILabel(
+            text="x",
+            relative_rect=pygame.Rect(0, 175, 1024, 32),
+            manager=self.gui_manager,
+            anchors={"centerx": "centerx"},
+            container=self.statistics,
+        )
+
         self.main_menu.hide()
+        self.statistics.hide()
 
     def setup_simulation(self):
         """
@@ -156,13 +201,18 @@ class App:
             self.gui_manager.draw_ui(self.screen)
             pygame.display.flip()
 
-    @event(pygame_gui.UI_BUTTON_PRESSED, ui_object_id=f"panel.{QUIT}")
-    @event(constants.QUIT, constants.K_q)
+    @event(pygame_gui.UI_BUTTON_PRESSED, ui_object_id=f"panel.{MAIN_MENU_QUIT}")
+    @event(constants.QUIT, constants.KEYDOWN)
     def on_quit(self, _event: pygame.event.Event):
         """
         Handler called when quitting the visualization
         """
-        self.running = False
+
+        if _event.type == constants.KEYDOWN:
+            if _event.key == constants.K_q:
+                self.running = False
+        else:
+            self.running = False
 
     @event(pygame_gui.UI_BUTTON_PRESSED, ui_object_id=f"panel.{START_SIMULATION}")
     def on_start_simulation(self, _event: pygame.event.Event):
@@ -192,6 +242,20 @@ class App:
             self.visualization.redraw(self.simulation)
 
         print("Finished running simulation")
+
+        self.load_stats(self.simulation.stats)
+
+    def load_stats(self, stats: SimulationStatistics):
+        """
+        Loads the statistics of the simulation
+        """
+
+        self.total_iterations_label.set_text(
+            f"Total iterations: {stats.total_iterations}"
+        )
+        self.total_runtime.set_text(f"Total runtime(s): {stats.runtime:.2f}")
+        self.final_value.set_text(f"{stats.final_value:.2f}")
+        self.statistics.show()
 
     def initial_state(self):
         """

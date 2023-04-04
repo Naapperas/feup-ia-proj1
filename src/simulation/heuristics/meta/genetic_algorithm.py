@@ -1,10 +1,7 @@
-from typing import Callable
-from simulation import State
-from metaheuristic import Metaheuristic
 import random
 from typing import Callable, Generator
 
-from metaheuristic import Metaheuristic
+from .metaheuristic import Metaheuristic
 
 from simulation import State
 from simulation.heuristics.neighborhood.generator import Generator as NeighborGenerator

@@ -238,6 +238,7 @@ class Visualization:
         """
         Handler for mouse zooms
         """
+
         pos = pygame.mouse.get_pos()
         self.translation = self.screen_to_map(pos)
         self.zoom += _event.y

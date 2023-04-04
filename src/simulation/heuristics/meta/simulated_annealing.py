@@ -1,11 +1,17 @@
 import math
 import random
 from typing import Callable, Generator
-
-from .metaheuristic import Metaheuristic
+from config import Config
 
 from simulation import State
 from simulation.heuristics.neighborhood.generator import Generator as NeighborGenerator
+
+from .metaheuristic import Metaheuristic
+
+
+MAX_ITERATIONS_WITHOUT_IMPROVEMENT = int(
+    Config.get("SA_MAX_ITERATIONS_WITHOUT_IMPROVEMENT")
+)
 
 
 class SimulatedAnnealing(Metaheuristic):
@@ -51,7 +57,9 @@ class SimulatedAnnealing(Metaheuristic):
             State: the final state that was reached by the simulated annealing algorithm
         """
 
-        prev_deltas: list[float] = []
+        prev_deltas: list[float] = [
+            -1 for _ in range(MAX_ITERATIONS_WITHOUT_IMPROVEMENT)
+        ]
 
         current_state = initial_state
         current_fitness = self.fitness_func(current_state)
@@ -72,7 +80,7 @@ class SimulatedAnnealing(Metaheuristic):
             else:
                 delta = neighbor_fitness - current_fitness
                 prev_deltas.append(delta)
-                if len(prev_deltas) > 5:
+                if len(prev_deltas) > MAX_ITERATIONS_WITHOUT_IMPROVEMENT:
                     prev_deltas.pop(0)
 
                 if all(val == 0 for val in prev_deltas) or len(set(prev_deltas)) == 1:

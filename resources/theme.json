@@ -71,5 +71,15 @@
             "border_width": "0",
             "shadow_width": "0"
         }
+    },
+    "statistics-panel": {
+        "misc": {
+            "border_width": "2",
+            "shadow_width": "2"
+        },
+        "colours": {
+            "dark_bg": "#21282DF0",
+            "normal_border": "#EEEEEE"
+        }
     }
 }
