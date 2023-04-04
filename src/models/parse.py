@@ -21,7 +21,7 @@ class Parsable:  # pylint: disable=too-few-public-methods
         return Parsable()
 
 
-FT_co = TypeVar("FT_co", bound=Type, covariant=True)
+FT_co = TypeVar("FT_co", bound=type, covariant=True)
 DicT = TypeVar("DicT")
 
 

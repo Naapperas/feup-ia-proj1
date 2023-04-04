@@ -6,19 +6,53 @@ Classes and methods related to running the simulation of the problem
 import math
 from dataclasses import dataclass, field
 from time import perf_counter
-from typing import Callable, Generator
+from typing import Callable, Generator, Optional
 
+from config import Config
 from models.establishment import Establishment
 from models.network import Network
 from models.parse import parse_model
 from simulation.heuristics.neighborhood.crossover import CrossoverGenerator
+from simulation.heuristics.neighborhood.generator import (
+    Generator as NeighborhoodGenerator,
+)
 from simulation.heuristics.neighborhood.mutation import MutationGenerator
 from simulation.heuristics.neighborhood.random import RandomGenerator
 
-from .graph import Graph, parse_graph
+from .graph import parse_graph
 from .heuristics.meta.metaheuristic import Metaheuristic
 from .heuristics.meta.simulated_annealing import SimulatedAnnealing
 from .state import State
+
+
+class SimulationConfig:
+    """
+    Class responsible for holding the configuration of the simulation
+    """
+
+    def __init__(
+        self,
+        heuristic: Optional[Metaheuristic],
+        fitness_function: Callable[[State], float],
+        neighborhood_generator: Optional[NeighborhoodGenerator],
+    ):
+        real_neighborhood_generator = (
+            neighborhood_generator
+            if neighborhood_generator is not None
+            else RandomGenerator(
+                [
+                    MutationGenerator(),
+                    CrossoverGenerator(),
+                ],
+                randomize=True,
+            )
+        )
+
+        self.heuristic = (
+            heuristic
+            if heuristic is not None
+            else Metaheuristic(real_neighborhood_generator, fitness_function)
+        )
 
 
 @dataclass(init=False)
@@ -46,10 +80,8 @@ class Simulation:
 
     def __init__(
         self,
-        depot: Establishment,
-        graph: Graph,
-        establishments: list[Establishment],
-        heuristic: Metaheuristic | None = None,
+        network: Network,
+        config: SimulationConfig,
     ):
         """Creates a new Simulation with the given parameters
 
@@ -61,29 +93,12 @@ class Simulation:
         """
         self.stats = SimulationStatistics()
         self.state = State([])
-        self.network = Network(depot, graph, establishments)
-        self.num_establishments = len(establishments)
+        self.network = network
+        self.num_establishments = len(
+            network.establishments
+        )  # HACK: this is a hack, but it works
 
-        if heuristic is None:
-            default_neighbor_generator = RandomGenerator(
-                [
-                    MutationGenerator(),
-                    CrossoverGenerator(),
-                ],
-                True,
-            )
-            default_fitness_function: Callable[[State], float] = lambda s: -s.value(
-                self.network
-            )
-
-            self.heuristic = SimulatedAnnealing(
-                default_neighbor_generator,
-                default_fitness_function,
-                cooling_factor=0.99,
-                limit_temp=1e-3,
-            )
-        else:
-            self.heuristic = heuristic
+        self.heuristic = config.heuristic
 
     def get_num_carriers(self) -> int:
         """
@@ -123,11 +138,20 @@ class Simulation:
         """
         Sets up the simulation
         """
+        num_establishments_to_parse = int(Config.get("NUM_MODELS_TO_PARSE"))
+
         establishments = parse_model(
-            "./resources/dataset/establishments.csv", Establishment
+            "./resources/dataset/establishments.csv",
+            Establishment,
+            num_establishments_to_parse,
         )
         graph = parse_graph("./resources/dataset/distances.csv")
 
         depot = establishments.pop(0)
 
-        return Simulation(depot, graph, list(establishments))
+        network = Network(depot, graph, establishments)
+
+        fitness_function: Callable[[State], float] = lambda state: -state.value(network)
+        simulation_config = SimulationConfig(None, fitness_function, None)
+
+        return Simulation(network, simulation_config)
