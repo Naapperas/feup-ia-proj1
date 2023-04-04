@@ -12,6 +12,10 @@ from config import Config
 from models.establishment import Establishment
 from models.network import Network
 from models.parse import parse_model
+from simulation.heuristics.initial_state.closest import ClosestGenerator
+from simulation.heuristics.initial_state.generator import (
+    Generator as InitialStateGenerator,
+)
 from simulation.heuristics.neighborhood.crossover import CrossoverGenerator
 from simulation.heuristics.neighborhood.generator import (
     Generator as NeighborhoodGenerator,
@@ -140,7 +144,7 @@ class Simulation:
         self.stats.total_iterations = iterations
 
     @staticmethod
-    def setup() -> "Simulation":
+    def setup(simulation_config: SimulationConfig) -> "Simulation":
         """
         Sets up the simulation
         """
@@ -154,8 +158,5 @@ class Simulation:
         graph = parse_graph("./resources/dataset/distances.csv")
 
         depot = establishments.pop(0)
-
-        fitness_function: Callable[[State], float] = lambda state: -state.value()
-        simulation_config = SimulationConfig(None, fitness_function, None)
 
         return Simulation(depot, establishments, graph, simulation_config)

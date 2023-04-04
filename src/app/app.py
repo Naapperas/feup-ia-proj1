@@ -5,19 +5,40 @@
 Functions and classes related to the application
 """
 
+import threading
+from typing import Callable
+
 import pygame
 import pygame_gui
-import threading
 from pygame import constants
+
 from config import Config
-
 from simulation import Simulation, SimulationStatistics
-from simulation.state import State
 from simulation.heuristics.initial_state.closest import ClosestGenerator
+from simulation.heuristics.initial_state.generator import (
+    Generator as InitialStateGenerator,
+)
+from simulation.heuristics.initial_state.random import (
+    RandomGenerator as RandomInitialStateGenerator,
+)
+from simulation.heuristics.meta.metaheuristic import Metaheuristic
+from simulation.heuristics.meta.simulated_annealing import SimulatedAnnealing
+from simulation.heuristics.neighborhood.crossover import CrossoverGenerator
+from simulation.heuristics.neighborhood.generator import (
+    Generator as NeighborhoodGenerator,
+)
+from simulation.heuristics.neighborhood.multiple import MultiGenerator
+from simulation.heuristics.neighborhood.mutation import MutationGenerator
+from simulation.heuristics.neighborhood.random import (
+    RandomGenerator as RandomNeighborhoodGenerator,
+)
+from simulation.heuristics.neighborhood.shuffle import ShuffleGenerator
+from simulation.simulation import SimulationConfig
+from simulation.state import State
 
+from .constants import *
 from .events import event, handle_events, listener
 from .visualization import Visualization
-from .constants import *
 
 
 class App:
@@ -191,10 +212,58 @@ class App:
         Sets up the simulation
         """
 
-        self.simulation = Simulation.setup()
+        # HACK: due to time restrictions, this is done this way. However, this should be configured somewhere else
+        # it should also be configurable through the GUI
+
+        # could add support for more in the future
+        fitness_function: Callable[[State], float] = lambda state: -state.value()
+
+        neighborhood_generators = {
+            "default": NeighborhoodGenerator(),
+            "crossover": CrossoverGenerator(),
+            "mutation": MutationGenerator(),
+            "random": RandomNeighborhoodGenerator(
+                [
+                    CrossoverGenerator(),
+                    MutationGenerator(),
+                ],
+                randomize=True,
+            ),
+            "multi": MultiGenerator(
+                [
+                    CrossoverGenerator(),
+                    MutationGenerator(),
+                ]
+            ),
+            "shuffle": ShuffleGenerator(),
+        }
+        neighborhood_generator: NeighborhoodGenerator = neighborhood_generators[
+            Config.get("NEIGHBORHOOD_GENERATOR")
+        ]
+
+        metaheuristics = {
+            "default": Metaheuristic(neighborhood_generator, fitness_function),
+            "sa": SimulatedAnnealing(
+                neighborhood_generator,
+                fitness_function,
+                float(Config.get("SA_INITIAL_TEMPERATURE")),
+                float(Config.get("SA_COOLDOWN_RATE")),
+                float(Config.get("SA_MIN_TEMPERATURE")),
+            ),
+        }
+        metaheuristic: Metaheuristic = metaheuristics[Config.get("METAHEURISTIC")]
+
+        simulation_config = SimulationConfig(
+            metaheuristic, fitness_function, neighborhood_generator
+        )
+
+        self.simulation = Simulation.setup(simulation_config)
+
         self.visualization.redraw(self.simulation)
+
         self.loading.hide()
         self.main_menu.show()
+
         self.establishments_slider.value_range = (
             0,
             len(self.simulation.state.network.establishments),
@@ -292,12 +361,24 @@ class App:
             network = (
                 self.simulation.state.network
             )  # Simulations start with a dummy state that already has the network loaded
+
+            # HACK: same as above
+            generators = {
+                "random": InitialStateGenerator(),
+                "closest": ClosestGenerator(),
+                "default": RandomInitialStateGenerator(),
+            }
+
+            generator: InitialStateGenerator = generators[
+                Config.get("INITIAL_STATE_GENERATOR")
+            ]
+
             self.simulation.state = State.initial_state(
                 network.depot,
                 network.graph,
                 network.establishments,
                 self.simulation.get_num_carriers(),
-                # ClosestGenerator(),
+                generator,
             )
             self.visualization.redraw(self.simulation)
         self.loading.hide()
