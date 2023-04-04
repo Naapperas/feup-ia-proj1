@@ -19,9 +19,8 @@ from simulation.heuristics.neighborhood.generator import (
 from simulation.heuristics.neighborhood.mutation import MutationGenerator
 from simulation.heuristics.neighborhood.random import RandomGenerator
 
-from .graph import parse_graph
+from .graph import Graph, parse_graph
 from .heuristics.meta.metaheuristic import Metaheuristic
-from .heuristics.meta.simulated_annealing import SimulatedAnnealing
 from .state import State
 
 
@@ -33,7 +32,7 @@ class SimulationConfig:
     def __init__(
         self,
         heuristic: Optional[Metaheuristic],
-        fitness_function: Callable[[State], float],
+        fitness_function: Optional[Callable[[State], float]],
         neighborhood_generator: Optional[NeighborhoodGenerator],
     ):
         real_neighborhood_generator = (
@@ -48,10 +47,16 @@ class SimulationConfig:
             )
         )
 
+        real_fitness_function: Callable[[State], float] = (
+            fitness_function
+            if fitness_function is not None
+            else lambda state: -state.value()
+        )
+
         self.heuristic = (
             heuristic
             if heuristic is not None
-            else Metaheuristic(real_neighborhood_generator, fitness_function)
+            else Metaheuristic(real_neighborhood_generator, real_fitness_function)
         )
 
 
@@ -80,7 +85,9 @@ class Simulation:
 
     def __init__(
         self,
-        network: Network,
+        depot: Establishment,
+        establishments: list[Establishment],
+        graph: Graph,
         config: SimulationConfig,
     ):
         """Creates a new Simulation with the given parameters
@@ -92,10 +99,9 @@ class Simulation:
             heuristic (Metaheuristic, optional): The metaheuristic to use when optimizing the problem's solution. Defaults to None.
         """
         self.stats = SimulationStatistics()
-        self.state = State([])
-        self.network = network
+        self.state = State([], depot, establishments, graph)
         self.num_establishments = len(
-            network.establishments
+            establishments
         )  # HACK: this is a hack, but it works
 
         self.heuristic = config.heuristic
@@ -117,7 +123,7 @@ class Simulation:
         iterations = 0
         start = perf_counter()
 
-        values: list[float] = [self.state.value(self.network)]
+        values: list[float] = [self.state.value()]
 
         for new_state in self.heuristic.optimize(self.state):
             self.state = new_state
@@ -149,9 +155,7 @@ class Simulation:
 
         depot = establishments.pop(0)
 
-        network = Network(depot, graph, establishments)
-
-        fitness_function: Callable[[State], float] = lambda state: -state.value(network)
+        fitness_function: Callable[[State], float] = lambda state: -state.value()
         simulation_config = SimulationConfig(None, fitness_function, None)
 
-        return Simulation(network, simulation_config)
+        return Simulation(depot, establishments, graph, simulation_config)

@@ -197,13 +197,13 @@ class App:
         self.main_menu.show()
         self.establishments_slider.value_range = (
             0,
-            len(self.simulation.network.establishments),
+            len(self.simulation.state.network.establishments),
         )
         self.establishments_slider.set_current_value(
-            len(self.simulation.network.establishments)
+            len(self.simulation.state.network.establishments)
         )
         self.establishments_label.set_text(
-            f"{len(self.simulation.network.establishments)} establishments"
+            f"{len(self.simulation.state.network.establishments)} establishments"
         )
 
     def loop(self):
@@ -289,8 +289,13 @@ class App:
 
         if self.simulation is not None:
             print("Loading initial state...")
+            network = (
+                self.simulation.state.network
+            )  # Simulations start with a dummy state that already has the network loaded
             self.simulation.state = State.initial_state(
-                self.simulation.network,
+                network.depot,
+                network.graph,
+                network.establishments,
                 self.simulation.get_num_carriers(),
                 # ClosestGenerator(),
             )
