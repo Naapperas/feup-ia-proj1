@@ -61,7 +61,9 @@ class State(Printable):
                     break
 
                 previous = brigade[-1]
-                establishment = generator.next(establishments_copy, previous, graph)
+                establishment = generator.next(
+                    dict(establishments_copy.items()), previous, graph
+                )
                 establishments_copy.pop(establishment.establishment_id)
                 brigade.append(establishment)
 

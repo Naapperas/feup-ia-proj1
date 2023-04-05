@@ -11,7 +11,7 @@ from typing import Callable
 import pygame
 import pygame_gui
 from pygame import constants
-
+´
 from config import Config
 from simulation import Simulation, SimulationStatistics
 from simulation.heuristics.initial_state.closest import ClosestGenerator
@@ -270,7 +270,7 @@ class App:
             "shuffle": ShuffleGenerator(),
         }
         neighborhood_generator: NeighborhoodGenerator = neighborhood_generators[
-            Config.get("NEIGHBORHOOD_GENERATOR")
+            Config.get("NEIGHBORHOOD_GENERATOR", "default")
         ]
 
         metaheuristics = {
@@ -278,12 +278,12 @@ class App:
             "sa": SimulatedAnnealing(
                 neighborhood_generator,
                 fitness_function,
-                float(Config.get("SA_INITIAL_TEMPERATURE")),
-                float(Config.get("SA_COOLDOWN_RATE")),
-                float(Config.get("SA_MIN_TEMPERATURE")),
+                float(Config.get("SA_INITIAL_TEMPERATURE", "1000")),
+                float(Config.get("SA_COOLDOWN_RATE", "0.999")),
+                float(Config.get("SA_MIN_TEMPERATURE", "0.00001")),
             ),
         }
-        metaheuristic: Metaheuristic = metaheuristics[Config.get("METAHEURISTIC")]
+        metaheuristic: Metaheuristic = metaheuristics[Config.get("METAHEURISTIC", "default")]
 
         simulation_config = SimulationConfig(
             metaheuristic, fitness_function, neighborhood_generator
@@ -402,14 +402,16 @@ class App:
 
             # HACK: same as above
             generators = {
-                "random": InitialStateGenerator(),
+                "default": InitialStateGenerator(),
                 "closest": ClosestGenerator(),
-                "default": RandomInitialStateGenerator(),
+                "random": RandomInitialStateGenerator(),
             }
 
             generator: InitialStateGenerator = generators[
-                Config.get("INITIAL_STATE_GENERATOR")
+                Config.get("INITIAL_STATE_GENERATOR", "default")
             ]
+
+            print(f"Using {generator.__class__.__name__} for initial state generation")
 
             self.simulation.state = State.initial_state(
                 network.depot,

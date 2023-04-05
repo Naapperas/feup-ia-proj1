@@ -3,6 +3,7 @@ Configuration related methods and classes go here
 """
 
 import os
+from typing import Optional
 
 from dotenv import dotenv_values
 
@@ -22,11 +23,11 @@ class _Config:
         self.__slots__ = list(configs.keys())
         self.__dict__.update(configs)
 
-    def get(self, key: str) -> str:
+    def get(self, key: str, default: Optional[str] = None) -> str:
         """
         Gets the value associated with the given config key
         """
-        return self.__dict__[key]
+        return self.__dict__.get(key, default)
 
     def set(self, key: str, value: str):
         """
