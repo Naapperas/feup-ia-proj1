@@ -37,4 +37,4 @@ When you run the program, you will be presented to a menu, in which you can run 
 
 While the algorithm runs, the visualization will change dinamically. When it finishes running, you will get a warning in the console and the final state will be presented.
 
-You can change the algorithm parameters in `simulations_params.py`
+You can change the algorithm parameters in the `.env` file. It is documented, so it should be straightforward enough to use.
