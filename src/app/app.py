@@ -11,7 +11,6 @@ from typing import Callable
 import pygame
 import pygame_gui
 from pygame import constants
-´
 from config import Config
 from simulation import Simulation, SimulationStatistics
 from simulation.heuristics.initial_state.closest import ClosestGenerator
